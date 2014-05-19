@@ -1,132 +1,6 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<title>COPE TDD Viewer</title>
-	<link rel="stylesheet" href="css/style.css"/>
-	<script src="src/jquery-2.1.0.js"></script>
-
-
-	<script src="src/jquery.ui.position.js" type="text/javascript"></script>
-	<script src="src/jquery.contextMenu.js" type="text/javascript"></script>
-
-	<script src="src/jquery-ui.js"></script>
-	<link href="src/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
-	<link href="css/ui-lightness/jquery-ui-1.10.4.css" rel="stylesheet">
-
-</head>
-<body>
-
-	<div id="settings">
-		<h1>COPE TDD Viewer</h1>
-		<label><input type="radio" name="diff_type" value="diffChars" checked> Chars</label>
-		<label><input type="radio" name="diff_type" value="diffWords"> Words</label>
-		<label><input type="radio" name="diff_type" value="diffLines"> Lines</label>
-		<button style="margin-left: 20px;">Save Annotations</button>
-		<img id="saveResult" >
-	</div>
-	<div id='tableContainer'>
-	<table>
-		<tr>
-			<td contenteditable="true" id="a">restaurant</td>
-			<td contenteditable="true" id="b">aura</td>
-			<td><pre id="result"></pre></td>
-		</tr>
-	</table>
-	</div>
-
-	<div id="bottomBar" >
-		<div id="allEvents" >
-		</div>
-	</div>
-	<div id="Marker1"></div>
-
-
-
-	<script src="diff.js"></script>
-	<script defer>
-		var lastUpdate = 'B';
-		var a = document.getElementById('a');
-		var b = document.getElementById('b');
-		var result = document.getElementById('result');
-
-		function changed() {
-			var diff = JsDiff[window.diffType](a.textContent, b.textContent);
-			var fragment = document.createDocumentFragment();
-			for (var i=0; i < diff.length; i++) {
-
-				if (diff[i].added && diff[i + 1] && diff[i + 1].removed) {
-					var swap = diff[i];
-					diff[i] = diff[i + 1];
-					diff[i + 1] = swap;
-				}
-
-				var node;
-				if (diff[i].removed) {
-					node = document.createElement('del');
-					node.appendChild(document.createTextNode(diff[i].value));
-				} else if (diff[i].added) {
-					node = document.createElement('ins');
-					node.appendChild(document.createTextNode(diff[i].value));
-				} else {
-					node = document.createTextNode(diff[i].value);
-				}
-				fragment.appendChild(node);
-			}
-
-			result.textContent = '';
-			result.appendChild(fragment);
-		}
-
-		window.onload = function() {
-			onDiffTypeChange(document.querySelector('#settings [name="diff_type"]:checked'));
-			changed();
-		};
-
-		a.onpaste = a.onchange =
-		b.onpaste = b.onchange = changed;
-
-		if ('oninput' in a) {
-			a.oninput = b.oninput = changed;
-		} else {
-			a.onkeyup = b.onkeyup = changed;
-		}
-
-		function onDiffTypeChange(radio) {
-			window.diffType = radio.value;
-			document.title = "Diff " + radio.value.slice(4);
-		}
-
-		var radio = document.getElementsByName('diff_type');
-		for (var i = 0; i < radio.length; i++) {
-			radio[i].onchange = function(e) {
-				onDiffTypeChange(e.target);
-				changed();
-			}
-		}
-
-		
-
-		
-
-
-	</script>
-	<script>
-
-		var allJSONData = [];
-
-		var fileNames = {};
-
 		var TDDCycles = [];
-
 		var filename;
-
-		var currStart;
-		var currEnd;
-
-		var selectionStart;
-		var selectionEnd;
-		var selectionRow;
+		var fileNames = {};
 
 		function findFirstTextChange(Idx){
 			while(Idx > 0 && allJSONData[Idx].eventType === "textChange"){
@@ -312,20 +186,7 @@
 			       return false;
 			    }
 			});
-
-
 		}
-
-		function checkAndSet(fileName) {
-			if (!(typeof fileName === "undefined")){ 
-				if(fileName.indexOf(".java") > -1){
-					AllFiles[fileName] = 1;
-				}else{
-					AllFiles["other"] = 1;
-				}
-			}
-		}
-
 
 		function getSafePath(path){
 			if(path === undefined){
@@ -350,41 +211,11 @@
 			$('.spacer').append("<div class='SPACER_" + divClass + "' id=Spacer" +idx+ "></div>");
 		}
 
-
-
-
-		function addTDDCycle(idx){
-			$("#TDD"+idx).css( "background-color", "red" );
-
-			var position = $("#TDD"+idx).offset(); 
-			$("#Marker1").css(position) 
-		}
-
-
-		function startCycle(el){
-			//console.log($(this).attr('id'));
-			$(this).css( "background-color", "aqua");
-
-		}
-
-		function endCycle(el){
-			$(this).css( "background-color", "yellow");
-		}
-
 		function isNumber(n) {
 			return !isNaN(parseFloat(n)) && isFinite(n);
 		}
 
-	function updateTDDCycle(cycleID,cycleType){
-		TDDCycles.forEach(function(currCycle){
-			if(currCycle.id === cycleID){
-				currCycle.CycleType = cycleType;
-			}
-		});
-	}
-
 	function TDDCallback(key, options) {
-
 		var arrOfClasses = this[0].className.split(" ");
 		var CycleID ;
 		arrOfClasses.forEach(function(entry) {
@@ -393,7 +224,6 @@
 				return;
 			}
 		});
-		// console.log(CycleID);
 		if(key === "writingTests"){
 
 			$("."+CycleID).removeClass("GREENCYCLE");
@@ -416,47 +246,11 @@
 		if(key === "delete"){
 			removeCycle(this[0].getAttribute('id').substr(3))
 		}
-
-	}
-
-
-	function addListeners(){
-		$('#TDDCycles').mousedown(function(event) {
-			var clickedElement = event.target;
-			// console.log(clickedElement.id);
-			currStart = clickedElement.id.substr(3);
-		});
-
-		$('#TDDCycles').mouseup(function(event) {
-			var clickedElement = event.target;
-			// console.log(clickedElement.id);
-			currEnd = clickedElement.id.substr(3);
-			// console.log(currStart + "_" + currEnd);
-
-			TDDCycles.push({"id":currStart+currEnd,"CycleType":"red","CycleStart":currStart,"CycleEnd":currEnd});
-			for (var i=Number(currStart);i<=Number(currEnd);i++)
-			{
-			    //$('#TDD'+i).css( "background-color", "#990000");
-			    $('#TDD'+i).addClass(currStart+currEnd+ " REDCYCLE");
-			    $('#TDD'+i).unbind();
-			    $.contextMenu({
-			    	selector: '#TDD'+i, 
-			    	callback: TDDCallback,
-			    	items: {
-			    		"writingTests": {name: "Tests", icon: "tests"},
-			    		"writingCode": {name: "Code", icon: "code"},
-			    		"refactoring": {name: "Refactor", icon: "refactor"},
-			    		"delete": {name: "Delete", icon: "delete"}
-			    	}
-			    });
-			}
-		});
 	}
 
 
 
 	function addColorandListeners(){
-
 		TDDCycles.forEach(function(entry) {
 			var currCycle;
 			if(entry.CycleType === 'red'){
@@ -565,9 +359,7 @@
 
 
   function findAllFiles(allJSONData){
-
   	fileNames["TDDCycles"] = 1;
-
   	$.each( allJSONData, function( key, val ) {
   		if (!(typeof val.entityAddress === "undefined")){ 
   			if(val.entityAddress.indexOf(".java") > -1){
@@ -576,32 +368,30 @@
   				fileNames["events"] = 1;
   			}
   		}
-
   	});
   	return(fileNames);
   }
 
 
   function loadCyclesFromServer(){
-  	$.ajax({
-  		url: 'ajax/Cycles_'+filename,
-  		dataType: 'json',
-  		success: function( data ) {
-  			if(data === null){
-  				console.log("No TDD Cycles saved");
-  			}else{
-		  		TDDCycles = data;
-		 	  	console.log(TDDCycles);
-		   		addColorandListeners();
-		   	}
-		},
-	});
+	  	$.ajax({
+	  		url: 'ajax/Cycles_'+filename,
+	  		dataType: 'json',
+	  		success: function( data ) {
+	  			if(data === null){
+	  				console.log("No TDD Cycles saved");
+	  			}else{
+			  		TDDCycles = data;
+			 	  	console.log(TDDCycles);
+			   		addColorandListeners();
+			   	}
+			},
+		});
   	}
 
+ //Read in data of all changes
   $(document).ready(function(){
-
   	filename = window.location.href.split("?")[1].split("=")[1];
-
   	$.getJSON("uploads/"+filename, function( data ) {
   		allJSONData = data;
   		var items = [];
@@ -614,12 +404,9 @@
   		$.each( allJSONData, function( key, val ) {
   			addEvent(val,key);
   		});
-  		addListeners();
+  		//addListeners();
   		loadCyclesFromServer();
   	});
-
-
-
   });
 
 
@@ -634,9 +421,3 @@
   		});
   	});
   });
-
-
-
-</script>
-</body>
-</html>
