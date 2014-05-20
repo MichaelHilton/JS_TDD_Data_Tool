@@ -109,6 +109,49 @@
 			addRightClickHandeler('#'+selectionRow+" "+"#"+nextTextChange);
 		}
 
+
+		function shiftCycleStartLeft(element){
+			console.log("ShiftCycleStartLeft");
+		}
+
+		function shiftCycleStartRight(element){
+			console.log("shiftCycleStartRight");
+
+		}
+		function shiftCycleEndLeft(element){
+			console.log("shiftCycleEndLeft");
+
+		}
+		function shiftCycleEndRight(element ){
+			console.log("shiftCycleEndRight");
+			var nextSpot = Number(element.data.currEnd)+1;
+			for (var i=0;i<TDDCycles.length;i++){
+				if(TDDCycles[i].CycleEnd > nextSpot && TDDCycles[i].CycleStart <= nextSpot){
+					return;
+				}
+			}
+			$('#TDD'+Number(element.data.currEnd)).removeClass("CycleStartEnd").addClass("CycleMidSelection");
+			var currCycle = TDDCycles.get(element.data.currCycle);
+			currCycle.CycleEnd = nextSpot;
+			if(currCycle.CycleType === "green"){
+				$('#TDD'+currCycle.CycleEnd).addClass("GREENCYCLE");
+			}else if(currCycle.CycleType === "red"){
+				$('#TDD'+currCycle.CycleEnd).addClass("REDCYCLE");
+			}else if(currCycle.CycleType === "blue"){
+				$('#TDD'+currCycle.CycleEnd).addClass("BLUECYCLE");
+			}
+			$('#TDD'+currCycle.CycleEnd).addClass("CycleStartEnd");
+			for (var i=0;i<TDDCycles.length;i++){
+				if(currCycle.id == TDDCycles[i].id){
+					TDDCycles[i].CycleEnd = nextSpot;
+					return;
+				}
+			}
+
+
+		}
+
+
 		function eventClickHandler(Idx,element){
 			//Handle Text Changes
 			if(allJSONData[Idx].eventType === "textChange"){
@@ -150,7 +193,7 @@
 
 			    
 			    $('#TDD'+i).unbind();
-			    $('#TDD'+i).bind("click",{curri:i,currCycle: currRange},selectCycleListener);
+			    $('#TDD'+i).bind("click",{curri:i,currCycle: currRange,currStart:currStart,currEnd:currEnd},selectCycleListener);
 			    $.contextMenu({
 			    	selector: '#TDD'+i, 
 			    	callback: TDDCallback,
@@ -180,7 +223,8 @@
 			selectionStart = first;
 			selectionEnd = last;
 			selectionRow = element.parentElement.id;
-			$( "div" ).removeClass( "firstSelection midSelection lastSelection");
+			removeAllSelection();
+			
 			$('#'+selectionRow+" "+"#"+first).addClass("firstSelection");
 			$('#'+selectionRow+" "+"#"+last).addClass("lastSelection");
 			addRightClickHandeler('#'+selectionRow+" "+"#"+first);
@@ -280,12 +324,16 @@
 	    }
 	};
 
+	function removeAllSelection(){
+		$( "div" ).removeClass( "CycleStartSelection CycleStartEnd CycleMidSelection");
+		$( "div" ).removeClass( "firstSelection midSelection lastSelection");
+		$(document).unbind('keydown');
+	}
+
 	function selectCycleListener(element){
 		console.log(element.data.currCycle);
 		var TDDCycleObj = TDDCycles.get(element.data.currCycle);
-
-
-		$( "div" ).removeClass( "CycleStartSelection CycleStartEnd CycleMidSelection");
+		removeAllSelection();
 		$('#TDD'+TDDCycleObj.CycleStart).addClass("CycleStartSelection");
 		$('#TDD'+TDDCycleObj.CycleEnd).addClass("CycleStartEnd");
 		for (var i=Number(TDDCycleObj.CycleStart)+1;i<=Number(TDDCycleObj.CycleEnd)-1;i++)
@@ -293,6 +341,30 @@
 			$('#TDD'+i).addClass("CycleMidSelection");
 			//addRightClickHandeler('#'+selectionRow+" "+"#"+i);
 		}
+
+		$(document).keydown(function(e){
+		    if (e.keyCode == 37) { 
+		    	if(e.shiftKey){
+		    		shiftCycleStartLeft(element);
+		    	}else{
+		    		shiftCycleEndLeft(element);
+		    	}			   
+		       return false;
+		    }
+		    if (e.keyCode == 39) { 
+		       if(e.shiftKey){
+		    		shiftCycleStartRight(element);
+		    	}else{
+		    		shiftCycleEndRight(element);
+		    	}	
+		       return false;
+		    }
+		});
+
+
+
+
+
 		//$('.'+TDDCycleObj.id).addClass("firstSelection");
 		// $('#'+selectionRow+" "+"#"+last).addClass("lastSelection");
 		// addRightClickHandeler('#'+selectionRow+" "+"#"+first);
@@ -316,7 +388,7 @@
 				//add correct class
 				$('#TDD'+i).addClass(currCycle+" "+entry.CycleStart+entry.CycleEnd);
 				//add left click listener
-				$('#TDD'+i).bind("click",{curri:i,currCycle: entry.CycleStart+entry.CycleEnd},selectCycleListener);
+				$('#TDD'+i).bind("click",{curri:i,currCycle: entry.CycleStart+entry.CycleEnd,currStart:entry.CycleStart,currEnd:entry.CycleEnd},selectCycleListener);
 				//add right click listener
 				$.contextMenu({
 					selector: '#TDD'+i, 
