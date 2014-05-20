@@ -131,7 +131,7 @@
 				}
 			}
 			$('#TDD'+Number(element.data.currEnd)).removeClass("CycleStartEnd").addClass("CycleMidSelection");
-			var currCycle = TDDCycles.get(element.data.currCycle);
+			//var currCycle = TDDCycles.get(element.data.currCycle);
 			currCycle.CycleEnd = nextSpot;
 			if(currCycle.CycleType === "green"){
 				$('#TDD'+currCycle.CycleEnd).addClass("GREENCYCLE");
@@ -166,55 +166,16 @@
 			changed();
 		}
 
-		function createCycle(key, options){
-			// console.log(selectionStart);
-			// console.log(selectionEnd);
-			currStart = selectionStart;
-			currEnd = selectionEnd;
-			var currRange = selectionStart + "" + selectionEnd
-			if(key === "Test"){
-				TDDCycles.push({"id":currRange,"CycleType":"red","CycleStart":currStart,"CycleEnd":currEnd});
-			}else if(key === "Code"){
-				TDDCycles.push({"id":currRange,"CycleType":"green","CycleStart":currStart,"CycleEnd":currEnd});
-			}else if(key === "Refactor"){
-				TDDCycles.push({"id":currRange,"CycleType":"blue","CycleStart":currStart,"CycleEnd":currEnd});
-			}
-
-			for (var i=Number(currStart);i<=Number(currEnd);i++)
-			{
-			    //$('#TDD'+i).css( "background-color", "#990000");
-			    if(key === "Test"){
-					$('#TDD'+i).addClass(currRange+ " REDCYCLE");
-				}else if(key === "Code"){
-					$('#TDD'+i).addClass(currRange+ " GREENCYCLE");
-				}else if(key === "Refactor"){
-					$('#TDD'+i).addClass(currRange+ " BLUECYCLE");
-				}
-
-			    
-			    $('#TDD'+i).unbind();
-			    $('#TDD'+i).bind("click",{curri:i,currCycle: currRange,currStart:currStart,currEnd:currEnd},selectCycleListener);
-			    $.contextMenu({
-			    	selector: '#TDD'+i, 
-			    	callback: TDDCallback,
-			    	items: {
-			    		"writingTests": {name: "Tests", icon: "tests"},
-			    		"writingCode": {name: "Code", icon: "code"},
-			    		"refactoring": {name: "Refactor", icon: "refactor"},
-			    		"delete": {name: "Delete", icon: "delete"}
-			    	}
-			    });
-			}
-		}
+		
 
 		function addRightClickHandeler(elem){
 		$.contextMenu({
 			    	selector: elem, 
 			    	callback: createCycle,
 			    	items: {
-			    		"Test": {name: "TestCycle", icon: "cycle"},
-			    		"Code": {name: "CodeCycle", icon: "cycle"},
-			    		"Refactor": {name: "RefactorCycle", icon: "cycle"}
+			    		"red": {name: "TestCycle", icon: "cycle"},
+			    		"green": {name: "CodeCycle", icon: "cycle"},
+			    		"blue": {name: "RefactorCycle", icon: "cycle"}
 			    	}
 			    });
 		}
@@ -317,12 +278,6 @@
 		}
 	}
 
-	Array.prototype.get = function(id) {
-	    for (var i=0, len=this.length; i<len; i++) {
-	        if (typeof this[i] != "object") continue;
-	        if (this[i].id === id) return this[i];
-	    }
-	};
 
 	function removeAllSelection(){
 		$( "div" ).removeClass( "CycleStartSelection CycleStartEnd CycleMidSelection");
@@ -332,11 +287,24 @@
 
 	function selectCycleListener(element){
 		console.log(element.data.currCycle);
-		var TDDCycleObj = TDDCycles.get(element.data.currCycle);
+		var selectedCycleIndex = -1;
+		for (var i=0;i<TDDCycles.length;i++)
+		{
+			if(TDDCycles[i].id === element.data.currCycle){
+				selectedCycleIndex=i;
+			}
+		}
+		if(selectedCycleIndex<0){
+			return;
+		}
+
+
+		var start = element.data.currStart;
+		var end = element.data.currEnd;
 		removeAllSelection();
-		$('#TDD'+TDDCycleObj.CycleStart).addClass("CycleStartSelection");
-		$('#TDD'+TDDCycleObj.CycleEnd).addClass("CycleStartEnd");
-		for (var i=Number(TDDCycleObj.CycleStart)+1;i<=Number(TDDCycleObj.CycleEnd)-1;i++)
+		$('#TDD'+start).addClass("CycleStartSelection");
+		$('#TDD'+end).addClass("CycleStartEnd");
+		for (var i=Number(start)+1;i<=Number(end)-1;i++)
 		{
 			$('#TDD'+i).addClass("CycleMidSelection");
 			//addRightClickHandeler('#'+selectionRow+" "+"#"+i);
@@ -361,34 +329,25 @@
 		    }
 		});
 
-
-
-
-
-		//$('.'+TDDCycleObj.id).addClass("firstSelection");
-		// $('#'+selectionRow+" "+"#"+last).addClass("lastSelection");
-		// addRightClickHandeler('#'+selectionRow+" "+"#"+first);
-		// addRightClickHandeler('#'+selectionRow+" "+"#"+last);
-		// 
-
 	}
 
+	function addNewCycleToTimeLine(startCycle,endCycle,cycleType){
+		
 
-	function addColorandListeners(){
-		TDDCycles.forEach(function(entry) {
-			var currCycle;
-			if(entry.CycleType === 'red'){
+		var currCycle;
+			if(cycleType === 'red'){
 				currCycle = "REDCYCLE";
-			}else if(entry.CycleType === 'green'){
+			}else if(cycleType === 'green'){
 				currCycle = "GREENCYCLE";
-			}else if(entry.CycleType === 'blue'){
+			}else if(cycleType === 'blue'){
 				currCycle = "BLUECYCLE";
 			}
-			for (var i=Number(entry.CycleStart);i<=Number(entry.CycleEnd);i++){
+
+		for (var i=Number(startCycle);i<=Number(endCycle);i++){
 				//add correct class
-				$('#TDD'+i).addClass(currCycle+" "+entry.CycleStart+entry.CycleEnd);
+				$('#TDD'+i).addClass(currCycle+" "+startCycle+endCycle);
 				//add left click listener
-				$('#TDD'+i).bind("click",{curri:i,currCycle: entry.CycleStart+entry.CycleEnd,currStart:entry.CycleStart,currEnd:entry.CycleEnd},selectCycleListener);
+				$('#TDD'+i).bind("click",{currCycle: startCycle+""+endCycle,currStart:startCycle,currEnd:endCycle},selectCycleListener);
 				//add right click listener
 				$.contextMenu({
 					selector: '#TDD'+i, 
@@ -401,8 +360,26 @@
 					}
 				});
 			}
+	}
+
+
+	function addColorandListeners(){
+		TDDCycles.forEach(function(entry) {
+			
+			addNewCycleToTimeLine(entry.CycleStart,entry.CycleEnd,entry.CycleType);
 		});
 	}
+
+
+function createCycle(key, options){
+			var currRange = selectionStart + "" + selectionEnd;
+			TDDCycles.push({"id":currRange,"CycleType":key,"CycleStart":selectionStart,"CycleEnd":selectionEnd});
+			addNewCycleToTimeLine(selectionStart,selectionEnd,key);
+			
+		}
+
+
+
 
 	function removeCycle(selectedID){
 		//console.log("REMOVE "+selectedID);
