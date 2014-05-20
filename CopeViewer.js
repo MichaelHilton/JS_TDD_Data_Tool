@@ -370,10 +370,20 @@
 		});
 	}
 
+	function addSortedCycle(currTDDCycle){
+		var insertLocation = 0;
+		for(var i = 0; i < TDDCycles.length;i++){
+			if(currTDDCycle.CycleEnd < TDDCycles[i].CycleStart ){
+				insertLocation = i;
+				break;
+			}
+		}
+		TDDCycles.splice(insertLocation,0,currTDDCycle);
+	}
 
-function createCycle(key, options){
+	function createCycle(key, options){
 			var currRange = selectionStart + "" + selectionEnd;
-			TDDCycles.push({"id":currRange,"CycleType":key,"CycleStart":selectionStart,"CycleEnd":selectionEnd});
+			addSortedCycle({"id":currRange,"CycleType":key,"CycleStart":selectionStart,"CycleEnd":selectionEnd});
 			addNewCycleToTimeLine(selectionStart,selectionEnd,key);
 			
 		}
