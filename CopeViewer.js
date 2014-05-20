@@ -390,7 +390,7 @@
 		});
   	}
 
-	function buildTDDPulse(){
+	function buildTDDPulse(cycles){
 		var initState = "init";
 		var redState = "red";
 		var greenState = "green";
@@ -412,8 +412,8 @@
 		}
 
 		var i = 0;
-		while(i < TDDCycles.length){
-			var currentCycle = TDDCycles[i];
+		while(i < cycles.length){
+			var currentCycle = cycles[i];
 			var advancement = 1;
 
 			if(currentState === initState)
@@ -448,7 +448,7 @@
   		//addListeners();
   		loadCyclesFromServer();
 
-			buildTDDPulse();
+		buildTDDPulse(TDDCycles);
   	});
   });
 
