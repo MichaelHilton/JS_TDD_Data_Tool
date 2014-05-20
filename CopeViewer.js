@@ -390,6 +390,10 @@
 		});
   	}
 
+  	function shallowClone(obj){
+  		return jQuery.extend({}, obj);
+  	}
+
 	function buildTDDPulse(cycles){
 		var TDDPulse = [];
 
