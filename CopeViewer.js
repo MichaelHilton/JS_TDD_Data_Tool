@@ -402,19 +402,45 @@
 		var greenState = "green";
 		var currentState = initState;
 
-		var pulsePrototype = {"red" : null, "green" : null, "blue" : null};
-		var currentPulse = pulsePrototype;
+		var emptyPulsePrototype = {"red" : null, "green" : null, "blue" : null};
+		var currentPulse = shallowClone(emptyPulsePrototype);
 
 		function doInitState(cycle){
-
+			if (cycle.CycleType === "red"){
+				currentState = redState;
+				currentPulse.red = cycle;
+			};
+			
+			return 1;
 		}
 
 		function doRedState(cycle){
+			if (cycle.CycleType === "green") {
+				currentState = greenState;
+				currentPulse.green = cycle;
+			}else{
+				currentState = initState;
+			};
 
+			return 1;
 		}
 
 		function doGreenState(cycle){
+			var advancement;
 
+			if (cycle.CycleType === "blue") {
+				currentPulse.blue = cycle;
+				advancement = 1;
+			} else{
+				advancement = 0;
+			}
+
+			currentState = initState;
+
+			TDDPulse.push(currentPulse);
+			currentPulse = shallowClone(emptyPulsePrototype);
+
+			return advancement;
 		}
 
 		var i = 0;
