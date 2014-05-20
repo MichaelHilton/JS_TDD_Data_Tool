@@ -463,6 +463,37 @@
 		return TDDPulse;
 	}
 
+	function testBuildTDDPulse(){
+		var red1 = {CycleType : "red"};
+		var green1 = {CycleType : "green"};
+		var blue1 = {CycleType : "blue"};
+
+		var red2 = {CycleType : "red"};
+		var green2 = {CycleType : "green"};
+
+		var red3 = {CycleType : "red"};
+		var green3 = {CycleType : "green"};
+		var blue3 = {CycleType : "blue"};
+
+
+		var cycles = [{CycleType : "blue"}, 
+						red1, 
+						green1, 
+						blue1, 
+						{CycleType : "red"}, 
+						{CycleType : "red"}, 
+						red2, 
+						green2, 
+						red3, 
+						green3, 
+						blue3
+					];
+
+		var expected = [{"red" : red1, "green" : green1, "blue" : blue1}, {"red" : red2, "green" : green2, "blue" : null}, {"red" : red3, "green" : green3, "blue" : blue3}];
+
+		console.debug(buildTDDPulse(cycles));
+	}
+
  //Read in data of all changes
   $(document).ready(function(){
   	filename = window.location.href.split("?")[1].split("=")[1];
