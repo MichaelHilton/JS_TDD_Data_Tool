@@ -70,7 +70,7 @@
 				selectionStart = prevTextChange;
 				$("#a").empty().text(allJSONData[selectionStart].currText);
 				changed();
-				addRightClickHandeler('#'+selectionRow+" "+"#"+prevTextChange);
+				addRightClickHandler('#'+selectionRow+" "+"#"+prevTextChange);
 			}
 		}
 
@@ -106,7 +106,7 @@
 			selectionEnd = nextTextChange;
 			$("#b").empty().text(allJSONData[selectionEnd].currText);
 			changed();
-			addRightClickHandeler('#'+selectionRow+" "+"#"+nextTextChange);
+			addRightClickHandler('#'+selectionRow+" "+"#"+nextTextChange);
 		}
 
 
@@ -120,7 +120,16 @@
 		}
 		function shiftCycleEndLeft(index){
 			console.log("shiftCycleEndLeft");
-
+			var currSpot = Number(TDDCycles[index].CycleEnd);
+			var nextSpot = currSpot-1;
+			if(nextSpot <= Number(TDDCycles[index].CycleStart)){
+				return;
+			}
+			$('#TDD'+currSpot).removeClass("CycleEndSelection "+" GREENCYCLE REDCYCLE BLUECYCLE "+ TDDCycles[index].id);
+			$('#TDD'+nextSpot).removeClass("CycleMidSelection").addClass("CycleEndSelection");
+			$('#TDD'+currSpot).unbind();
+			TDDCycles[index].CycleEnd = nextSpot;
+			$.contextMenu('destroy','#'+selectionRow+" "+"#"+selectionStart);
 		}
 		function shiftCycleEndRight(index){
 			console.log("shiftCycleEndRight");
@@ -135,7 +144,7 @@
 			var currCycleType = TDDCycles[index].CycleType;
 			var currCycleID = TDDCycles[index].id;
 
-			$('#TDD'+currSpot).removeClass("CycleStartEnd").addClass("CycleMidSelection");
+			$('#TDD'+currSpot).removeClass("CycleEndSelection").addClass("CycleMidSelection");
 
 			var currCycleColor ;
 			if(currCycleType === "green"){
@@ -146,11 +155,11 @@
 				currCycleColor = "BLUECYCLE";
 			}
 
-			$('#TDD'+nextSpot).addClass("CycleStartEnd "+ currCycleColor+ " "+ currCycleID);
+			$('#TDD'+nextSpot).addClass("CycleEndSelection "+ currCycleColor+ " "+ currCycleID);
 			$('#TDD'+nextSpot).bind("click",{currIdx:index},selectCycleListener);
 
 			TDDCycles[index].CycleEnd = nextSpot;
-
+			addCycleRightClickHandler("#TDD"+nextSpot);
 
 		}
 
@@ -170,7 +179,7 @@
 
 		
 
-		function addRightClickHandeler(elem){
+		function addRightClickHandler(elem){
 		$.contextMenu({
 			    	selector: elem, 
 			    	callback: createCycle,
@@ -182,6 +191,19 @@
 			    });
 		}
 
+		function addCycleRightClickHandler(elem){
+			$.contextMenu({
+					selector: elem, 
+					callback: TDDCallback,
+					items: {
+						"writingTests": {name: "Tests", icon: "tests"},
+						"writingCode": {name: "Code", icon: "code"},
+						"refactoring": {name: "Refactor", icon: "refactor"},
+						"delete": {name: "Delete", icon: "delete"}
+					}
+				});
+		}
+
 		function createSelection(first,last,element){
 			selectionStart = first;
 			selectionEnd = last;
@@ -190,12 +212,12 @@
 			
 			$('#'+selectionRow+" "+"#"+first).addClass("firstSelection");
 			$('#'+selectionRow+" "+"#"+last).addClass("lastSelection");
-			addRightClickHandeler('#'+selectionRow+" "+"#"+first);
-			addRightClickHandeler('#'+selectionRow+" "+"#"+last);
+			addRightClickHandler('#'+selectionRow+" "+"#"+first);
+			addRightClickHandler('#'+selectionRow+" "+"#"+last);
 			for (var i=Number(first+1);i<=Number(last-1);i++)
 			{
 				$('#'+selectionRow+" "+"#"+i).addClass("midSelection");
-				addRightClickHandeler('#'+selectionRow+" "+"#"+i);
+				addRightClickHandler('#'+selectionRow+" "+"#"+i);
 			}
 
 			$(document).unbind('keydown');
@@ -282,7 +304,7 @@
 
 
 	function removeAllSelection(){
-		$( "div" ).removeClass( "CycleStartSelection CycleStartEnd CycleMidSelection");
+		$( "div" ).removeClass( "CycleStartSelection CycleEndSelection CycleMidSelection");
 		$( "div" ).removeClass( "firstSelection midSelection lastSelection");
 		$(document).unbind('keydown');
 	}
@@ -295,11 +317,11 @@
 		var end = TDDCycles[selectedCycleIndex].CycleEnd;
 		removeAllSelection();
 		$('#TDD'+start).addClass("CycleStartSelection");
-		$('#TDD'+end).addClass("CycleStartEnd");
+		$('#TDD'+end).addClass("CycleEndSelection");
 		for (var i=Number(start)+1;i<=Number(end)-1;i++)
 		{
 			$('#TDD'+i).addClass("CycleMidSelection");
-			//addRightClickHandeler('#'+selectionRow+" "+"#"+i);
+			//addRightClickHandler('#'+selectionRow+" "+"#"+i);
 		}
 
 		$(document).keydown(function(e){
@@ -344,16 +366,17 @@
 				//add left click listener
 				$('#TDD'+i).bind("click",{currIdx:TDDCyclesIndex},selectCycleListener);
 				//add right click listener
-				$.contextMenu({
-					selector: '#TDD'+i, 
-					callback: TDDCallback,
-					items: {
-						"writingTests": {name: "Tests", icon: "tests"},
-						"writingCode": {name: "Code", icon: "code"},
-						"refactoring": {name: "Refactor", icon: "refactor"},
-						"delete": {name: "Delete", icon: "delete"}
-					}
-				});
+				// $.contextMenu({
+				// 	selector: '#TDD'+i, 
+				// 	callback: TDDCallback,
+				// 	items: {
+				// 		"writingTests": {name: "Tests", icon: "tests"},
+				// 		"writingCode": {name: "Code", icon: "code"},
+				// 		"refactoring": {name: "Refactor", icon: "refactor"},
+				// 		"delete": {name: "Delete", icon: "delete"}
+				// 	}
+				// });
+				addCycleRightClickHandler('#TDD'+i);
 			}
 	}
 

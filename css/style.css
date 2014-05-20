@@ -299,7 +299,7 @@ width:2px;
 	background-color: #BC2C31;
 }
 
-#TDDCyclesRow .CycleStartEnd.REDCYCLE{
+#TDDCyclesRow .CycleEndSelection.REDCYCLE{
 	opacity: 1;
 	border-top: 2px solid #233300;
 	height: 16px;
@@ -324,7 +324,7 @@ width:2px;
 	border-bottom: 2px solid #233300;
 }
 
-#TDDCyclesRow .CycleStartEnd.GREENCYCLE{
+#TDDCyclesRow .CycleEndSelection.GREENCYCLE{
 	opacity: 1;
 	border-top: 2px solid #233300;
 	height: 16px;
@@ -348,7 +348,7 @@ width:2px;
 	border-bottom: 2px solid #1D3146;
 }
 
-#TDDCyclesRow .CycleStartEnd.BLUECYCLE{
+#TDDCyclesRow .CycleEndSelection.BLUECYCLE{
 	opacity: 1;
 	border-top: 2px solid #1D3146;
 	height: 16px;
