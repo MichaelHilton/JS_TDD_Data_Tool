@@ -189,15 +189,11 @@ background-color: #EC173A;
 }
 
 #TDDCyclesRow .placeHolder{
-	border-left: 1px solid #DBDBDB;
-	width:7px;
+	width:8px;
 }
 
 #TDDCyclesRow .smallPlaceHolder{
-border-color:blue;
-border-left: 1px solid  #DBDBDB;
-border-right: 0px;
-width: 1px;
+width: 2px;
 }
 
 #TDDCycles{
@@ -205,31 +201,25 @@ width: 1px;
 	border-bottom: 1px solid black;
 }
 
-#TDDCycles .placeHolder.REDCYCLE{
-	border:none;
+/*#TDDCycles .placeHolder.REDCYCLE{
 	width:8px;
 }
 #TDDCycles .placeHolder.GREENCYCLE {
-	border:none;
 	width:8px;
 }
 #TDDCycles .placeHolder.BLUECYCLE{
-	border:none;
 	width:8px;
-}
-
+}*/
+/*
 #TDDCycles .smallPlaceHolder.REDCYCLE {
-border:none;
 width:2px;
 }
 #TDDCycles .smallPlaceHolder.GREENCYCLE{
-border:none;
 width:2px;
 }
 #TDDCycles .smallPlaceHolder.BLUECYCLE{
-border:none;
 width:2px;
-}
+}*/
 
 .REDCYCLE{
 	background-color: #af292e;
@@ -286,12 +276,84 @@ width:2px;
 }
 
 
-
-
 #tableContainer{
 	height: 80%;
 	overflow: scroll;
 }
 
 
+#TDDCyclesRow .CycleStartSelection.REDCYCLE{
+	border-top: 2px solid #631114;
+	height: 16px;
+	border-bottom:2px solid #631114;
+	border-left: 2px solid #631114;
+	background-color: #BC2C31;
+	width:6px;
+}
+
+#TDDCyclesRow .CycleMidSelection.REDCYCLE{
+	opacity: 1;
+	border-top: 2px solid #631114;
+	height: 16px;
+	border-bottom: 2px solid #631114;
+	background-color: #BC2C31;
+}
+
+#TDDCyclesRow .CycleStartEnd.REDCYCLE{
+	opacity: 1;
+	border-top: 2px solid #233300;
+	height: 16px;
+	border-bottom: 2px solid #233300;
+	border-right: 2px solid #233300;
+	background-color: #BC2C31;
+		width:6px;
+}
+
+#TDDCyclesRow .CycleStartSelection.GREENCYCLE{
+	border-top: 2px solid #233300;
+	height: 16px;
+	border-bottom:2px solid #233300;
+	border-left: 2px solid #233300;
+	width:6px;
+}
+
+#TDDCyclesRow .CycleMidSelection.GREENCYCLE{
+	opacity: 1;
+	border-top: 2px solid #233300;
+	height: 16px;
+	border-bottom: 2px solid #233300;
+}
+
+#TDDCyclesRow .CycleStartEnd.GREENCYCLE{
+	opacity: 1;
+	border-top: 2px solid #233300;
+	height: 16px;
+	border-bottom: 2px solid #233300;
+	border-right: 2px solid #233300;
+		width:6px;
+}
+
+#TDDCyclesRow .CycleStartSelection.BLUECYCLE{
+	border-top: 2px solid #1D3146;
+	height: 16px;
+	border-bottom:2px solid #1D3146;
+	border-left: 2px solid #1D3146;
+	width:6px;
+}
+
+#TDDCyclesRow .CycleMidSelection.BLUECYCLE{
+	opacity: 1;
+	border-top: 2px solid #1D3146;
+	height: 16px;
+	border-bottom: 2px solid #1D3146;
+}
+
+#TDDCyclesRow .CycleStartEnd.BLUECYCLE{
+	opacity: 1;
+	border-top: 2px solid #1D3146;
+	height: 16px;
+	border-bottom: 2px solid #1D3146;
+	border-right: 2px solid #1D3146;
+		width:6px;
+}
 

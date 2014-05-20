@@ -31,6 +31,29 @@
 			return i;
 		}
 
+
+		function findLeftMostClass(startSelection,className){
+			var i = startSelection-1;
+			var currSelection = $('#'+selectionRow+" "+"#"+i);
+			while(!currSelection.hasClass(className)&& i>0){
+				i = i-1;
+				currSelection = $('#'+selectionRow+" "+"#"+i);
+			}
+			if(i <1 ){
+				return startSelection;
+			}
+			return i;
+		}	
+		function findRightMostClass(startSelection,className){
+			var i = startSelection+1;
+			var currSelection = $('#'+selectionRow+" "+"#"+i);
+			while(!currSelection.hasClass(className) && i<allJSONData.length){
+				i = i+1;
+				currSelection = $('#'+selectionRow+" "+"#"+i);
+			}
+			return i;
+		}
+
 		function findLastTextChange(Idx){
 			while(Idx < allJSONData.length && allJSONData[Idx].eventType === "textChange"){
 				 Idx++;
@@ -40,7 +63,7 @@
 
 		function shiftStartLeft(){
 			// console.log("shiftStartLeft");
-			var prevTextChange = findPreviousTextChange(selectionStart);
+			var prevTextChange = findLeftMostClass(selectionStart,"textChange");
 			if(prevTextChange != selectionStart){
 				$('#'+selectionRow+" "+"#"+prevTextChange).addClass("firstSelection");
 				$('#'+selectionRow+" "+"#"+selectionStart).removeClass("firstSelection").addClass("midSelection");
@@ -53,7 +76,7 @@
 
 		function shiftStartRight(){
 			// console.log("shiftStartRight");
-			var nextTextChange = findNextTextChange(selectionStart);
+			var nextTextChange = findRightMostClass(selectionStart,"textChange");
 			if(nextTextChange <= selectionEnd){
 				$('#'+selectionRow+" "+"#"+nextTextChange).addClass("firstSelection");
 				$('#'+selectionRow+" "+"#"+selectionStart).removeClass("firstSelection midSelection");
@@ -105,27 +128,29 @@
 			// console.log(selectionEnd);
 			currStart = selectionStart;
 			currEnd = selectionEnd;
+			var currRange = selectionStart + "" + selectionEnd
 			if(key === "Test"){
-				TDDCycles.push({"id":currStart+currEnd,"CycleType":"red","CycleStart":currStart,"CycleEnd":currEnd});
+				TDDCycles.push({"id":currRange,"CycleType":"red","CycleStart":currStart,"CycleEnd":currEnd});
 			}else if(key === "Code"){
-				TDDCycles.push({"id":currStart+currEnd,"CycleType":"green","CycleStart":currStart,"CycleEnd":currEnd});
+				TDDCycles.push({"id":currRange,"CycleType":"green","CycleStart":currStart,"CycleEnd":currEnd});
 			}else if(key === "Refactor"){
-				TDDCycles.push({"id":currStart+currEnd,"CycleType":"blue","CycleStart":currStart,"CycleEnd":currEnd});
+				TDDCycles.push({"id":currRange,"CycleType":"blue","CycleStart":currStart,"CycleEnd":currEnd});
 			}
 
 			for (var i=Number(currStart);i<=Number(currEnd);i++)
 			{
 			    //$('#TDD'+i).css( "background-color", "#990000");
 			    if(key === "Test"){
-					$('#TDD'+i).addClass(currStart+currEnd+ " REDCYCLE");
+					$('#TDD'+i).addClass(currRange+ " REDCYCLE");
 				}else if(key === "Code"){
-					$('#TDD'+i).addClass(currStart+currEnd+ " GREENCYCLE");
+					$('#TDD'+i).addClass(currRange+ " GREENCYCLE");
 				}else if(key === "Refactor"){
-					$('#TDD'+i).addClass(currStart+currEnd+ " BLUECYCLE");
+					$('#TDD'+i).addClass(currRange+ " BLUECYCLE");
 				}
 
 			    
 			    $('#TDD'+i).unbind();
+			    $('#TDD'+i).bind("click",{curri:i,currCycle: currRange},selectCycleListener);
 			    $.contextMenu({
 			    	selector: '#TDD'+i, 
 			    	callback: TDDCallback,
@@ -248,6 +273,33 @@
 		}
 	}
 
+	Array.prototype.get = function(id) {
+	    for (var i=0, len=this.length; i<len; i++) {
+	        if (typeof this[i] != "object") continue;
+	        if (this[i].id === id) return this[i];
+	    }
+	};
+
+	function selectCycleListener(element){
+		console.log(element.data.currCycle);
+		var TDDCycleObj = TDDCycles.get(element.data.currCycle);
+
+
+		$( "div" ).removeClass( "CycleStartSelection CycleStartEnd CycleMidSelection");
+		$('#TDD'+TDDCycleObj.CycleStart).addClass("CycleStartSelection");
+		$('#TDD'+TDDCycleObj.CycleEnd).addClass("CycleStartEnd");
+		for (var i=Number(TDDCycleObj.CycleStart)+1;i<=Number(TDDCycleObj.CycleEnd)-1;i++)
+		{
+			$('#TDD'+i).addClass("CycleMidSelection");
+			//addRightClickHandeler('#'+selectionRow+" "+"#"+i);
+		}
+		//$('.'+TDDCycleObj.id).addClass("firstSelection");
+		// $('#'+selectionRow+" "+"#"+last).addClass("lastSelection");
+		// addRightClickHandeler('#'+selectionRow+" "+"#"+first);
+		// addRightClickHandeler('#'+selectionRow+" "+"#"+last);
+		// 
+
+	}
 
 
 	function addColorandListeners(){
@@ -261,7 +313,11 @@
 				currCycle = "BLUECYCLE";
 			}
 			for (var i=Number(entry.CycleStart);i<=Number(entry.CycleEnd);i++){
+				//add correct class
 				$('#TDD'+i).addClass(currCycle+" "+entry.CycleStart+entry.CycleEnd);
+				//add left click listener
+				$('#TDD'+i).bind("click",{curri:i,currCycle: entry.CycleStart+entry.CycleEnd},selectCycleListener);
+				//add right click listener
 				$.contextMenu({
 					selector: '#TDD'+i, 
 					callback: TDDCallback,
