@@ -112,10 +112,48 @@
 
 		function shiftCycleStartLeft(index){
 			console.log("ShiftCycleStartLeft");
+			var currSpot = Number(TDDCycles[index].CycleStart);
+			var nextSpot = currSpot-1;
+			
+			if(index>0){
+				if(nextSpot <= TDDCycles[index-1].CycleEnd){
+					return;
+				}
+			}
+
+			var currCycleType = TDDCycles[index].CycleType;
+			var currCycleID = TDDCycles[index].id;
+
+			$('#TDD'+currSpot).removeClass("CycleStartSelection").addClass("CycleMidSelection");
+
+			var currCycleColor ;
+			if(currCycleType === "green"){
+				currCycleColor = "GREENCYCLE";
+			}else if(currCycleType === "red"){
+				currCycleColor = "REDCYCLE";
+			}else if(currCycleType === "blue"){
+				currCycleColor = "BLUECYCLE";
+			}
+
+			$('#TDD'+nextSpot).addClass("CycleStartSelection "+ currCycleColor+ " "+ currCycleID);
+			$('#TDD'+nextSpot).bind("click",{currIdx:index},selectCycleListener);
+
+			TDDCycles[index].CycleStart = nextSpot;
+			addCycleRightClickHandler("#TDD"+nextSpot);
 		}
 
 		function shiftCycleStartRight(index){
 			console.log("shiftCycleStartRight");
+			var currSpot = Number(TDDCycles[index].CycleStart);
+			var nextSpot = currSpot+1;
+			if(nextSpot >= Number(TDDCycles[index].CycleEnd)){
+				return;
+			}
+			$('#TDD'+currSpot).removeClass("CycleStartSelection "+" GREENCYCLE REDCYCLE BLUECYCLE "+ TDDCycles[index].id);
+			$('#TDD'+nextSpot).removeClass("CycleMidSelection").addClass("CycleStartSelection");
+			$('#TDD'+currSpot).unbind();
+			TDDCycles[index].CycleStart = nextSpot;
+			$.contextMenu('destroy','#TDD'+currSpot);
 
 		}
 		function shiftCycleEndLeft(index){

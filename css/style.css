@@ -333,6 +333,27 @@ width:2px;
 		width:6px;
 }
 
+
+#TDDCyclesRow .smallPlaceHolder.CycleStartSelection.BLUECYCLE{
+	width:0px;
+}
+#TDDCyclesRow .smallPlaceHolder.CycleStartSelection.GREENCYCLE{
+	width:0px;
+}
+#TDDCyclesRow .smallPlaceHolder.CycleStartSelection.REDCYCLE{
+	width:0px;
+}
+
+#TDDCyclesRow .smallPlaceHolder.CycleEndSelection.BLUECYCLE{
+	width:0px;
+}
+#TDDCyclesRow .smallPlaceHolder.CycleEndSelection.GREENCYCLE{
+	width:0px;
+}
+#TDDCyclesRow .smallPlaceHolder.CycleEndSelection.REDCYCLE{
+	width:0px;
+}
+
 #TDDCyclesRow .CycleStartSelection.BLUECYCLE{
 	border-top: 2px solid #1D3146;
 	height: 16px;
