@@ -32,6 +32,29 @@
 			return i;
 		}
 
+
+		function findLeftMostClass(startSelection,className){
+			var i = startSelection-1;
+			var currSelection = $('#'+selectionRow+" "+"#"+i);
+			while(!currSelection.hasClass(className)&& i>0){
+				i = i-1;
+				currSelection = $('#'+selectionRow+" "+"#"+i);
+			}
+			if(i <1 ){
+				return startSelection;
+			}
+			return i;
+		}	
+		function findRightMostClass(startSelection,className){
+			var i = startSelection+1;
+			var currSelection = $('#'+selectionRow+" "+"#"+i);
+			while(!currSelection.hasClass(className) && i<allJSONData.length){
+				i = i+1;
+				currSelection = $('#'+selectionRow+" "+"#"+i);
+			}
+			return i;
+		}
+
 		function findLastTextChange(Idx){
 			while(Idx < allJSONData.length && allJSONData[Idx].eventType === "textChange"){
 				 Idx++;
@@ -41,20 +64,20 @@
 
 		function shiftStartLeft(){
 			// console.log("shiftStartLeft");
-			var prevTextChange = findPreviousTextChange(selectionStart);
+			var prevTextChange = findLeftMostClass(selectionStart,"textChange");
 			if(prevTextChange != selectionStart){
 				$('#'+selectionRow+" "+"#"+prevTextChange).addClass("firstSelection");
 				$('#'+selectionRow+" "+"#"+selectionStart).removeClass("firstSelection").addClass("midSelection");
 				selectionStart = prevTextChange;
 				$("#a").empty().text(allJSONData[selectionStart].currText);
 				changed();
-				addRightClickHandeler('#'+selectionRow+" "+"#"+prevTextChange);
+				addRightClickHandler('#'+selectionRow+" "+"#"+prevTextChange);
 			}
 		}
 
 		function shiftStartRight(){
 			// console.log("shiftStartRight");
-			var nextTextChange = findNextTextChange(selectionStart);
+			var nextTextChange = findRightMostClass(selectionStart,"textChange");
 			if(nextTextChange <= selectionEnd){
 				$('#'+selectionRow+" "+"#"+nextTextChange).addClass("firstSelection");
 				$('#'+selectionRow+" "+"#"+selectionStart).removeClass("firstSelection midSelection");
@@ -84,7 +107,99 @@
 			selectionEnd = nextTextChange;
 			$("#b").empty().text(allJSONData[selectionEnd].currText);
 			changed();
-			addRightClickHandeler('#'+selectionRow+" "+"#"+nextTextChange);
+			addRightClickHandler('#'+selectionRow+" "+"#"+nextTextChange);
+		}
+
+
+		function shiftCycleStartLeft(index){
+			console.log("ShiftCycleStartLeft");
+			var currSpot = Number(TDDCycles[index].CycleStart);
+			var nextSpot = currSpot-1;
+			
+			if(index>0){
+				if(nextSpot <= TDDCycles[index-1].CycleEnd){
+					return;
+				}
+			}
+
+			var currCycleType = TDDCycles[index].CycleType;
+			var currCycleID = TDDCycles[index].id;
+
+			$('#TDD'+currSpot).removeClass("CycleStartSelection").addClass("CycleMidSelection");
+
+			var currCycleColor ;
+			if(currCycleType === "green"){
+				currCycleColor = "GREENCYCLE";
+			}else if(currCycleType === "red"){
+				currCycleColor = "REDCYCLE";
+			}else if(currCycleType === "blue"){
+				currCycleColor = "BLUECYCLE";
+			}
+
+			$('#TDD'+nextSpot).addClass("CycleStartSelection "+ currCycleColor+ " "+ currCycleID);
+			$('#TDD'+nextSpot).bind("click",{currIdx:index},selectCycleListener);
+
+			TDDCycles[index].CycleStart = nextSpot;
+			addCycleRightClickHandler("#TDD"+nextSpot);
+		}
+
+		function shiftCycleStartRight(index){
+			console.log("shiftCycleStartRight");
+			var currSpot = Number(TDDCycles[index].CycleStart);
+			var nextSpot = currSpot+1;
+			if(nextSpot >= Number(TDDCycles[index].CycleEnd)){
+				return;
+			}
+			$('#TDD'+currSpot).removeClass("CycleStartSelection "+" GREENCYCLE REDCYCLE BLUECYCLE "+ TDDCycles[index].id);
+			$('#TDD'+nextSpot).removeClass("CycleMidSelection").addClass("CycleStartSelection");
+			$('#TDD'+currSpot).unbind();
+			TDDCycles[index].CycleStart = nextSpot;
+			$.contextMenu('destroy','#TDD'+currSpot);
+
+		}
+		function shiftCycleEndLeft(index){
+			console.log("shiftCycleEndLeft");
+			var currSpot = Number(TDDCycles[index].CycleEnd);
+			var nextSpot = currSpot-1;
+			if(nextSpot <= Number(TDDCycles[index].CycleStart)){
+				return;
+			}
+			$('#TDD'+currSpot).removeClass("CycleEndSelection "+" GREENCYCLE REDCYCLE BLUECYCLE "+ TDDCycles[index].id);
+			$('#TDD'+nextSpot).removeClass("CycleMidSelection").addClass("CycleEndSelection");
+			$('#TDD'+currSpot).unbind();
+			TDDCycles[index].CycleEnd = nextSpot;
+			$.contextMenu('destroy','#TDD'+currSpot);
+		}
+		function shiftCycleEndRight(index){
+			console.log("shiftCycleEndRight");
+			var currSpot = Number(TDDCycles[index].CycleEnd);
+			var nextSpot = currSpot+1;
+			if(index<(TDDCycles.length-1)){
+				if(nextSpot >= TDDCycles[index+1].CycleStart){
+					return;
+				}
+			}
+
+			var currCycleType = TDDCycles[index].CycleType;
+			var currCycleID = TDDCycles[index].id;
+
+			$('#TDD'+currSpot).removeClass("CycleEndSelection").addClass("CycleMidSelection");
+
+			var currCycleColor ;
+			if(currCycleType === "green"){
+				currCycleColor = "GREENCYCLE";
+			}else if(currCycleType === "red"){
+				currCycleColor = "REDCYCLE";
+			}else if(currCycleType === "blue"){
+				currCycleColor = "BLUECYCLE";
+			}
+
+			$('#TDD'+nextSpot).addClass("CycleEndSelection "+ currCycleColor+ " "+ currCycleID);
+			$('#TDD'+nextSpot).bind("click",{currIdx:index},selectCycleListener);
+
+			TDDCycles[index].CycleEnd = nextSpot;
+			addCycleRightClickHandler("#TDD"+nextSpot);
+
 		}
 
 		function eventClickHandler(Idx,element){
@@ -101,70 +216,47 @@
 			changed();
 		}
 
-		function createCycle(key, options){
-			// console.log(selectionStart);
-			// console.log(selectionEnd);
-			currStart = selectionStart;
-			currEnd = selectionEnd;
-			if(key === "Test"){
-				TDDCycles.push({"id":currStart+currEnd,"CycleType":"red","CycleStart":currStart,"CycleEnd":currEnd});
-			}else if(key === "Code"){
-				TDDCycles.push({"id":currStart+currEnd,"CycleType":"green","CycleStart":currStart,"CycleEnd":currEnd});
-			}else if(key === "Refactor"){
-				TDDCycles.push({"id":currStart+currEnd,"CycleType":"blue","CycleStart":currStart,"CycleEnd":currEnd});
-			}
+		
 
-			for (var i=Number(currStart);i<=Number(currEnd);i++)
-			{
-			    //$('#TDD'+i).css( "background-color", "#990000");
-			    if(key === "Test"){
-					$('#TDD'+i).addClass(currStart+currEnd+ " REDCYCLE");
-				}else if(key === "Code"){
-					$('#TDD'+i).addClass(currStart+currEnd+ " GREENCYCLE");
-				}else if(key === "Refactor"){
-					$('#TDD'+i).addClass(currStart+currEnd+ " BLUECYCLE");
-				}
-
-			    
-			    $('#TDD'+i).unbind();
-			    $.contextMenu({
-			    	selector: '#TDD'+i, 
-			    	callback: TDDCallback,
-			    	items: {
-			    		"writingTests": {name: "Tests", icon: "tests"},
-			    		"writingCode": {name: "Code", icon: "code"},
-			    		"refactoring": {name: "Refactor", icon: "refactor"},
-			    		"delete": {name: "Delete", icon: "delete"}
-			    	}
-			    });
-			}
-		}
-
-		function addRightClickHandeler(elem){
+		function addRightClickHandler(elem){
 		$.contextMenu({
 			    	selector: elem, 
 			    	callback: createCycle,
 			    	items: {
-			    		"Test": {name: "TestCycle", icon: "cycle"},
-			    		"Code": {name: "CodeCycle", icon: "cycle"},
-			    		"Refactor": {name: "RefactorCycle", icon: "cycle"}
+			    		"red": {name: "TestCycle", icon: "cycle"},
+			    		"green": {name: "CodeCycle", icon: "cycle"},
+			    		"blue": {name: "RefactorCycle", icon: "cycle"}
 			    	}
 			    });
+		}
+
+		function addCycleRightClickHandler(elem){
+			$.contextMenu({
+					selector: elem, 
+					callback: TDDCallback,
+					items: {
+						"writingTests": {name: "Tests", icon: "tests"},
+						"writingCode": {name: "Code", icon: "code"},
+						"refactoring": {name: "Refactor", icon: "refactor"},
+						"delete": {name: "Delete", icon: "delete"}
+					}
+				});
 		}
 
 		function createSelection(first,last,element){
 			selectionStart = first;
 			selectionEnd = last;
 			selectionRow = element.parentElement.id;
-			$( "div" ).removeClass( "firstSelection midSelection lastSelection");
+			removeAllSelection();
+			
 			$('#'+selectionRow+" "+"#"+first).addClass("firstSelection");
 			$('#'+selectionRow+" "+"#"+last).addClass("lastSelection");
-			addRightClickHandeler('#'+selectionRow+" "+"#"+first);
-			addRightClickHandeler('#'+selectionRow+" "+"#"+last);
+			addRightClickHandler('#'+selectionRow+" "+"#"+first);
+			addRightClickHandler('#'+selectionRow+" "+"#"+last);
 			for (var i=Number(first+1);i<=Number(last-1);i++)
 			{
 				$('#'+selectionRow+" "+"#"+i).addClass("midSelection");
-				addRightClickHandeler('#'+selectionRow+" "+"#"+i);
+				addRightClickHandler('#'+selectionRow+" "+"#"+i);
 			}
 
 			$(document).unbind('keydown');
@@ -250,32 +342,112 @@
 	}
 
 
+	function removeAllSelection(){
+		$( "div" ).removeClass( "CycleStartSelection CycleEndSelection CycleMidSelection");
+		$( "div" ).removeClass( "firstSelection midSelection lastSelection");
+		$(document).unbind('keydown');
+	}
 
-	function addColorandListeners(){
-		TDDCycles.forEach(function(entry) {
-			var currCycle;
-			if(entry.CycleType === 'red'){
+	function selectCycleListener(element){
+		console.log(element.data.currIdx);
+		var selectedCycleIndex = element.data.currIdx;
+
+		var start = TDDCycles[selectedCycleIndex].CycleStart;
+		var end = TDDCycles[selectedCycleIndex].CycleEnd;
+		removeAllSelection();
+		$('#TDD'+start).addClass("CycleStartSelection");
+		$('#TDD'+end).addClass("CycleEndSelection");
+		for (var i=Number(start)+1;i<=Number(end)-1;i++)
+		{
+			$('#TDD'+i).addClass("CycleMidSelection");
+			//addRightClickHandler('#'+selectionRow+" "+"#"+i);
+		}
+
+		$(document).keydown(function(e){
+		    if (e.keyCode == 37) { 
+		    	if(e.shiftKey){
+		    		shiftCycleStartLeft(selectedCycleIndex);
+		    	}else{
+		    		shiftCycleEndLeft(selectedCycleIndex);
+		    	}			   
+		       return false;
+		    }
+		    if (e.keyCode == 39) { 
+		       if(e.shiftKey){
+		    		shiftCycleStartRight(selectedCycleIndex);
+		    	}else{
+		    		shiftCycleEndRight(selectedCycleIndex);
+		    	}	
+		       return false;
+		    }
+		});
+
+	}
+
+	function addNewCycleToTimeLine(TDDCyclesIndex){
+	
+		var startCycle = TDDCycles[TDDCyclesIndex].CycleStart;
+		var endCycle = TDDCycles[TDDCyclesIndex].CycleEnd;
+		var cycleType = TDDCycles[TDDCyclesIndex].CycleType;
+
+		var currCycle;
+			if(cycleType === 'red'){
 				currCycle = "REDCYCLE";
-			}else if(entry.CycleType === 'green'){
+			}else if(cycleType === 'green'){
 				currCycle = "GREENCYCLE";
-			}else if(entry.CycleType === 'blue'){
+			}else if(cycleType === 'blue'){
 				currCycle = "BLUECYCLE";
 			}
-			for (var i=Number(entry.CycleStart);i<=Number(entry.CycleEnd);i++){
-				$('#TDD'+i).addClass(currCycle+" "+entry.CycleStart+entry.CycleEnd);
-				$.contextMenu({
-					selector: '#TDD'+i, 
-					callback: TDDCallback,
-					items: {
-						"writingTests": {name: "Tests", icon: "tests"},
-						"writingCode": {name: "Code", icon: "code"},
-						"refactoring": {name: "Refactor", icon: "refactor"},
-						"delete": {name: "Delete", icon: "delete"}
-					}
-				});
+
+		for (var i=Number(startCycle);i<=Number(endCycle);i++){
+				//add correct class
+				$('#TDD'+i).addClass(currCycle+" "+startCycle+endCycle);
+				//add left click listener
+				$('#TDD'+i).bind("click",{currIdx:TDDCyclesIndex},selectCycleListener);
+				//add right click listener
+				// $.contextMenu({
+				// 	selector: '#TDD'+i, 
+				// 	callback: TDDCallback,
+				// 	items: {
+				// 		"writingTests": {name: "Tests", icon: "tests"},
+				// 		"writingCode": {name: "Code", icon: "code"},
+				// 		"refactoring": {name: "Refactor", icon: "refactor"},
+				// 		"delete": {name: "Delete", icon: "delete"}
+				// 	}
+				// });
+				addCycleRightClickHandler('#TDD'+i);
 			}
-		});
 	}
+
+
+	function addColorandListeners(){
+		for(var i = 0; i < TDDCycles.length; i++){
+			addNewCycleToTimeLine(i);
+		}
+		// TDDCycles.forEach(function(entry) {
+			
+		// 	addNewCycleToTimeLine(entry.CycleStart,entry.CycleEnd,entry.CycleType);
+		// });
+	}
+
+	function addSortedCycle(currTDDCycle){
+		var insertLocation = 0;
+		for(var i = 0; i < TDDCycles.length;i++){
+			if(currTDDCycle.CycleEnd < TDDCycles[i].CycleStart ){
+				insertLocation = i;
+				break;
+			}
+		}
+		TDDCycles.splice(insertLocation,0,currTDDCycle);
+		return insertLocation;
+	}
+
+	function createCycle(key, options){
+			var currRange = selectionStart + "" + selectionEnd;
+			var currInsertLocation = addSortedCycle({"id":currRange,"CycleType":key,"CycleStart":selectionStart,"CycleEnd":selectionEnd});
+			addNewCycleToTimeLine(currInsertLocation);			
+		}
+
 
 	function removeCycle(selectedID){
 		//console.log("REMOVE "+selectedID);
