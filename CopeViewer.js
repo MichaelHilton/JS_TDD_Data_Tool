@@ -1,4 +1,5 @@
 		var TDDCycles = [];
+		var TDDPulse = [];
 		var filename;
 		var fileNames = {};
 
@@ -389,6 +390,45 @@
 		});
   	}
 
+	function buildTDDPulse(){
+		var initState = "init";
+		var redState = "red";
+		var greenState = "green";
+		var currentState = initState;
+
+		var pulsePrototype = {"red" : null, "green" : null, "blue" : null};
+		var currentPulse = pulsePrototype;
+
+		function doInitState(cycle){
+
+		}
+
+		function doRedState(cycle){
+
+		}
+
+		function doGreenState(cycle){
+
+		}
+
+		var i = 0;
+		while(i < TDDCycles.length){
+			var currentCycle = TDDCycles[i];
+			var advancement = 1;
+
+			if(currentState === initState)
+				advancement = doInitState(currentCycle);
+
+			if(currentState === redState)
+				advancement = doRedState(currentCycle);
+
+			if(currentState === greenState)
+				advancement = doGreenState(currentCycle)
+
+			i += advancement;
+		}
+	}
+
  //Read in data of all changes
   $(document).ready(function(){
   	filename = window.location.href.split("?")[1].split("=")[1];
@@ -404,8 +444,11 @@
   		$.each( allJSONData, function( key, val ) {
   			addEvent(val,key);
   		});
+
   		//addListeners();
   		loadCyclesFromServer();
+
+			buildTDDPulse();
   	});
   });
 
