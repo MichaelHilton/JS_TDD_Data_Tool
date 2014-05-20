@@ -129,7 +129,7 @@
 			$('#TDD'+nextSpot).removeClass("CycleMidSelection").addClass("CycleEndSelection");
 			$('#TDD'+currSpot).unbind();
 			TDDCycles[index].CycleEnd = nextSpot;
-			$.contextMenu('destroy','#'+selectionRow+" "+"#"+selectionStart);
+			$.contextMenu('destroy','#TDD'+currSpot);
 		}
 		function shiftCycleEndRight(index){
 			console.log("shiftCycleEndRight");
