@@ -448,14 +448,14 @@
 			var currentCycle = cycles[i];
 			var advancement = 1;
 
-			if(currentState === initState)
+			if (currentState === initState)
 				advancement = doInitState(currentCycle);
 
-			if(currentState === redState)
+			else if (currentState === redState)
 				advancement = doRedState(currentCycle);
 
-			if(currentState === greenState)
-				advancement = doGreenState(currentCycle)
+			else if (currentState === greenState)
+				advancement = doGreenState(currentCycle);
 
 			i += advancement;
 		}
