@@ -350,7 +350,14 @@
 
 	function selectCycleListener(element){
 		console.log(element.data.currIdx);
-		var selectedCycleIndex = element.data.currIdx;
+		//var selectedCycleIndex = element.data.currIdx;
+
+		var selectedCycleIndex;
+		for(var i = 0; i < TDDCycles.length;i++){
+			if(TDDCycles[i].id === element.data.currId){
+				selectedCycleIndex = i;
+			}
+		}
 
 		var start = TDDCycles[selectedCycleIndex].CycleStart;
 		var end = TDDCycles[selectedCycleIndex].CycleEnd;
@@ -403,7 +410,7 @@
 				//add correct class
 				$('#TDD'+i).addClass(currCycle+" "+startCycle+endCycle);
 				//add left click listener
-				$('#TDD'+i).bind("click",{currIdx:TDDCyclesIndex},selectCycleListener);
+				$('#TDD'+i).bind("click",{currIdx:TDDCyclesIndex,currId:TDDCycles[TDDCyclesIndex].id},selectCycleListener);
 				//add right click listener
 				// $.contextMenu({
 				// 	selector: '#TDD'+i, 
@@ -431,7 +438,7 @@
 	}
 
 	function addSortedCycle(currTDDCycle){
-		var insertLocation = 0;
+		var insertLocation = TDDCycles.length;
 		for(var i = 0; i < TDDCycles.length;i++){
 			if(currTDDCycle.CycleEnd < TDDCycles[i].CycleStart ){
 				insertLocation = i;
