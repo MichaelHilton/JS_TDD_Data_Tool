@@ -391,6 +391,8 @@
   	}
 
 	function buildTDDPulse(cycles){
+		var TDDPulse = [];
+
 		var initState = "init";
 		var redState = "red";
 		var greenState = "green";
@@ -427,6 +429,8 @@
 
 			i += advancement;
 		}
+
+		return TDDPulse;
 	}
 
  //Read in data of all changes
@@ -448,7 +452,7 @@
   		//addListeners();
   		loadCyclesFromServer();
 
-		buildTDDPulse(TDDCycles);
+		TDDPulse = buildTDDPulse(TDDCycles);
   	});
   });
 
