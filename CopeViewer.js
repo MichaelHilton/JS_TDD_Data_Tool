@@ -308,6 +308,15 @@
 			return !isNaN(parseFloat(n)) && isFinite(n);
 		}
 
+	function updateTDDCycle(cycleID,cycleType){
+		TDDCycles.forEach(function(currCycle){
+			if(currCycle.id === cycleID){
+				currCycle.CycleType = cycleType;
+			}
+		});
+	}
+
+
 	function TDDCallback(key, options) {
 		var arrOfClasses = this[0].className.split(" ");
 		var CycleID ;
