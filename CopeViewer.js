@@ -110,47 +110,49 @@
 		}
 
 
-		function shiftCycleStartLeft(element){
+		function shiftCycleStartLeft(index){
 			console.log("ShiftCycleStartLeft");
 		}
 
-		function shiftCycleStartRight(element){
+		function shiftCycleStartRight(index){
 			console.log("shiftCycleStartRight");
 
 		}
-		function shiftCycleEndLeft(element){
+		function shiftCycleEndLeft(index){
 			console.log("shiftCycleEndLeft");
 
 		}
-		function shiftCycleEndRight(element ){
+		function shiftCycleEndRight(index){
 			console.log("shiftCycleEndRight");
-			var nextSpot = Number(element.data.currEnd)+1;
-			for (var i=0;i<TDDCycles.length;i++){
-				if(TDDCycles[i].CycleEnd > nextSpot && TDDCycles[i].CycleStart <= nextSpot){
+			var currSpot = Number(TDDCycles[index].CycleEnd);
+			var nextSpot = currSpot+1;
+			if(index<(TDDCycles.length-1)){
+				if(nextSpot >= TDDCycles[index+1].CycleStart){
 					return;
 				}
 			}
-			$('#TDD'+Number(element.data.currEnd)).removeClass("CycleStartEnd").addClass("CycleMidSelection");
-			//var currCycle = TDDCycles.get(element.data.currCycle);
-			currCycle.CycleEnd = nextSpot;
-			if(currCycle.CycleType === "green"){
-				$('#TDD'+currCycle.CycleEnd).addClass("GREENCYCLE");
-			}else if(currCycle.CycleType === "red"){
-				$('#TDD'+currCycle.CycleEnd).addClass("REDCYCLE");
-			}else if(currCycle.CycleType === "blue"){
-				$('#TDD'+currCycle.CycleEnd).addClass("BLUECYCLE");
+
+			var currCycleType = TDDCycles[index].CycleType;
+			var currCycleID = TDDCycles[index].id;
+
+			$('#TDD'+currSpot).removeClass("CycleStartEnd").addClass("CycleMidSelection");
+
+			var currCycleColor ;
+			if(currCycleType === "green"){
+				currCycleColor = "GREENCYCLE";
+			}else if(currCycleType === "red"){
+				currCycleColor = "REDCYCLE";
+			}else if(currCycleType === "blue"){
+				currCycleColor = "BLUECYCLE";
 			}
-			$('#TDD'+currCycle.CycleEnd).addClass("CycleStartEnd");
-			for (var i=0;i<TDDCycles.length;i++){
-				if(currCycle.id == TDDCycles[i].id){
-					TDDCycles[i].CycleEnd = nextSpot;
-					return;
-				}
-			}
+
+			$('#TDD'+nextSpot).addClass("CycleStartEnd "+ currCycleColor+ " "+ currCycleID);
+			$('#TDD'+nextSpot).bind("click",{currIdx:index},selectCycleListener);
+
+			TDDCycles[index].CycleEnd = nextSpot;
 
 
 		}
-
 
 		function eventClickHandler(Idx,element){
 			//Handle Text Changes
@@ -286,21 +288,11 @@
 	}
 
 	function selectCycleListener(element){
-		console.log(element.data.currCycle);
-		var selectedCycleIndex = -1;
-		for (var i=0;i<TDDCycles.length;i++)
-		{
-			if(TDDCycles[i].id === element.data.currCycle){
-				selectedCycleIndex=i;
-			}
-		}
-		if(selectedCycleIndex<0){
-			return;
-		}
+		console.log(element.data.currIdx);
+		var selectedCycleIndex = element.data.currIdx;
 
-
-		var start = element.data.currStart;
-		var end = element.data.currEnd;
+		var start = TDDCycles[selectedCycleIndex].CycleStart;
+		var end = TDDCycles[selectedCycleIndex].CycleEnd;
 		removeAllSelection();
 		$('#TDD'+start).addClass("CycleStartSelection");
 		$('#TDD'+end).addClass("CycleStartEnd");
@@ -313,17 +305,17 @@
 		$(document).keydown(function(e){
 		    if (e.keyCode == 37) { 
 		    	if(e.shiftKey){
-		    		shiftCycleStartLeft(element);
+		    		shiftCycleStartLeft(selectedCycleIndex);
 		    	}else{
-		    		shiftCycleEndLeft(element);
+		    		shiftCycleEndLeft(selectedCycleIndex);
 		    	}			   
 		       return false;
 		    }
 		    if (e.keyCode == 39) { 
 		       if(e.shiftKey){
-		    		shiftCycleStartRight(element);
+		    		shiftCycleStartRight(selectedCycleIndex);
 		    	}else{
-		    		shiftCycleEndRight(element);
+		    		shiftCycleEndRight(selectedCycleIndex);
 		    	}	
 		       return false;
 		    }
@@ -331,8 +323,11 @@
 
 	}
 
-	function addNewCycleToTimeLine(startCycle,endCycle,cycleType){
-		
+	function addNewCycleToTimeLine(TDDCyclesIndex){
+	
+		var startCycle = TDDCycles[TDDCyclesIndex].CycleStart;
+		var endCycle = TDDCycles[TDDCyclesIndex].CycleEnd;
+		var cycleType = TDDCycles[TDDCyclesIndex].CycleType;
 
 		var currCycle;
 			if(cycleType === 'red'){
@@ -347,7 +342,7 @@
 				//add correct class
 				$('#TDD'+i).addClass(currCycle+" "+startCycle+endCycle);
 				//add left click listener
-				$('#TDD'+i).bind("click",{currCycle: startCycle+""+endCycle,currStart:startCycle,currEnd:endCycle},selectCycleListener);
+				$('#TDD'+i).bind("click",{currIdx:TDDCyclesIndex},selectCycleListener);
 				//add right click listener
 				$.contextMenu({
 					selector: '#TDD'+i, 
@@ -364,10 +359,13 @@
 
 
 	function addColorandListeners(){
-		TDDCycles.forEach(function(entry) {
+		for(var i = 0; i < TDDCycles.length; i++){
+			addNewCycleToTimeLine(i);
+		}
+		// TDDCycles.forEach(function(entry) {
 			
-			addNewCycleToTimeLine(entry.CycleStart,entry.CycleEnd,entry.CycleType);
-		});
+		// 	addNewCycleToTimeLine(entry.CycleStart,entry.CycleEnd,entry.CycleType);
+		// });
 	}
 
 	function addSortedCycle(currTDDCycle){
@@ -379,16 +377,14 @@
 			}
 		}
 		TDDCycles.splice(insertLocation,0,currTDDCycle);
+		return insertLocation;
 	}
 
 	function createCycle(key, options){
 			var currRange = selectionStart + "" + selectionEnd;
-			addSortedCycle({"id":currRange,"CycleType":key,"CycleStart":selectionStart,"CycleEnd":selectionEnd});
-			addNewCycleToTimeLine(selectionStart,selectionEnd,key);
-			
+			var currInsertLocation = addSortedCycle({"id":currRange,"CycleType":key,"CycleStart":selectionStart,"CycleEnd":selectionEnd});
+			addNewCycleToTimeLine(currInsertLocation);			
 		}
-
-
 
 
 	function removeCycle(selectedID){
