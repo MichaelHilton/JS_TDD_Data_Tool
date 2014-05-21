@@ -595,8 +595,8 @@
   	return metricArray;
   }
 
-  function buildPulseChart(TDDPulse, timestampMetric){
-  	var metrics = mapPulseArrayToMetrics(TDDPulse, timestampMetric);
+  function buildPulseChart(TDDPulse, metricFunction){
+  	var metrics = mapPulseArrayToMetrics(TDDPulse, metricFunction);
 
   	TDDPulse.forEach(function(pulse, index){
   		$('#pulseCharts').append("<div class='pulseChart' id='pulse" + index + "'></div>");
