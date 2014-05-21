@@ -561,7 +561,7 @@
   	return(fileNames);
   }
 
-  function timestampMetric(cycle, maxValue){
+  function timestampMetric(cycle){
   	if (cycle == null) {return 0};
 
   	var startingEvent = allJSONData[cycle.CycleStart];
