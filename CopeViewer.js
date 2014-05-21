@@ -595,6 +595,14 @@
   	return metricArray;
   }
 
+  function buildPulseChart(TDDPulse, timestampMetric){
+  	var metrics = mapPulseToMetrics(TDDPulse, timestampMetric);
+
+  	TDDPulse.forEach(function(pulse, index){
+  		$('#pulseCharts').append("<div class='pulseChart' id='" + index + "'></div>");
+  	});
+  }
+
   function loadCyclesFromServer(){
 	  	$.ajax({
 	  		url: 'ajax/Cycles_'+filename,
@@ -608,6 +616,8 @@
 			   		addColorandListeners();
 
 			   		TDDPulse = buildTDDPulse(TDDCycles);
+
+			   		buildPulseChart(TDDPulse, timestampMetric);
 			   	}
 			},
 		});
