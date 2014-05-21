@@ -14,8 +14,15 @@
 	<link href="src/jquery.contextMenu.css" rel="stylesheet" type="text/css" />
 	<link href="css/ui-lightness/jquery-ui-1.10.4.css" rel="stylesheet">
 
+	<script src="http://d3js.org/d3.v3.js"></script>
+	<script type="text/javascript" src="SampleRadarChart.js"></script>
+
 </head>
 <body>
+
+	<div id="PulseArea">
+	 <div id="chart"></div>
+	</div>
 
 	<div id="settings">
 		<h1>COPE TDD Viewer</h1>
@@ -25,6 +32,7 @@
 		<button style="margin-left: 20px;">Save Annotations</button>
 		<img id="saveResult" >
 	</div>
+
 	<div id='tableContainer'>
 	<table>
 		<tr>
@@ -106,6 +114,42 @@
 		}
 
 		
+
+		var w = 500,
+			h = 500;
+
+		var colorscale = d3.scale.category10();
+
+		//Legend titles
+		var LegendOptions = ['Smartphone','Tablet'];
+
+		//RADAR CHART
+		//Data
+		var d2 = [
+		  [
+			{axis:"Email",value:0.59},
+			{axis:"Social Networks",value:0.56},
+			{axis:"Internet Banking",value:0.42},
+		  ],[
+			{axis:"Email",value:0.48},
+			{axis:"Social Networks",value:0.41},
+			{axis:"Internet Banking",value:0.27},
+		  ]
+		];
+
+
+		//Options for the Radar chart, other than default
+		var mycfg2 = {
+		  w: 80,
+		  h: 80,
+		  maxValue: 0.6,
+		  levels: 1,
+		  ExtraWidthX: 300
+		}
+
+		//Call function to draw the Radar chart
+		//Will expect that data is in %'s
+		RadarChart.draw("#chart", d2, mycfg2);
 
 		
 
