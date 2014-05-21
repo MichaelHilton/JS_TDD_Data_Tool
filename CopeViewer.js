@@ -599,7 +599,8 @@
   	var metrics = mapPulseArrayToMetrics(TDDPulse, timestampMetric);
 
   	TDDPulse.forEach(function(pulse, index){
-  		$('#pulseCharts').append("<div class='pulseChart' id='" + index + "'></div>");
+  		$('#pulseCharts').append("<div class='pulseChart' id='pulse" + index + "'></div>");
+
   	});
   }
 
