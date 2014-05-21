@@ -573,6 +573,8 @@
 			  		TDDCycles = data;
 			 	  	console.log(TDDCycles);
 			   		addColorandListeners();
+
+			   		TDDPulse = buildTDDPulse(TDDCycles);
 			   	}
 			},
 		});
@@ -700,8 +702,6 @@
 
   		//addListeners();
   		loadCyclesFromServer();
-
-		TDDPulse = buildTDDPulse(TDDCycles);
   	});
   });
 
