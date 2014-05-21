@@ -561,6 +561,31 @@
   	return(fileNames);
   }
 
+  //map an array of pulses to an array of pulse metrics
+  function mapPulseToMetrics(TDDPulse, metricFunction){
+  	var metricArray = [];
+  	var maxCycleValues = computeMaxCycleValues(TDDPulse, metricFunction);
+
+  	var maxRed = Number.MAX_VALUE;
+  	var maxGreen = Number.MAX_VALUE;
+  	var maxBlue = Number.MAX_VALUE;
+
+	TDDPulse.forEach(function(pulse){
+		if (metricFunction(pulse.red, null) > maxRed) {maxRed = metricFunction(pulse.red, null)};
+		if (metricFunction(pulse.green, null) > maxGreen) {maxGreen = metricFunction(pulse.green, null)};
+		if (metricFunction(pulse.blue, null) > maxBlue) {maxBlue = metricFunction(pulse.blue, null)};
+	});  	
+
+  	TDDPulse.forEach(function(pulse){
+  		var redMetric = metricFunction(pulse.red, maxRed);
+  		var greenMetric = metricFunction(pulse.green, maxGreen);
+  		var blueMetric = metricFunction(pulse.blue, maxBlue);
+
+  		metricArray.push({red : redMetric, green : greenMetric, blue : blueMetric});
+  	});
+
+  	return metricArray;
+  }
 
   function loadCyclesFromServer(){
 	  	$.ajax({
