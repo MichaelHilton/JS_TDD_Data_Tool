@@ -571,7 +571,7 @@
   }
 
   //map an array of pulses to an array of pulse metrics
-  function mapPulseToMetrics(TDDPulse, metricFunction){
+  function mapPulseArrayToMetrics(TDDPulse, metricFunction){
   	var metricArray = [];
 
   	var maxRed = Number.MIN_VALUE;
@@ -596,7 +596,7 @@
   }
 
   function buildPulseChart(TDDPulse, timestampMetric){
-  	var metrics = mapPulseToMetrics(TDDPulse, timestampMetric);
+  	var metrics = mapPulseArrayToMetrics(TDDPulse, timestampMetric);
 
   	TDDPulse.forEach(function(pulse, index){
   		$('#pulseCharts').append("<div class='pulseChart' id='" + index + "'></div>");
