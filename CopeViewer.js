@@ -561,6 +561,31 @@
   	return(fileNames);
   }
 
+  //given a cycle, construct mappings like file -> [event, ...] for all files touched in the cycle
+  function computeSourceFileTextEventMap(cycle){
+  	return {};
+  }
+
+  //how many words does firstString differ from secondString
+  function getWordDiffSize(firstString, secondString){
+  	return 1;
+  }
+
+  function wordChangedMetric(cycle){
+  	var fileMap = computeSourceFileTextEventMap(cycle);
+
+  	if (Object.keys(fileMap) == 0) {return 0};
+
+  	var sizeArray = Object.keys(fileMap).map(function(file){
+  		var firstTextEvent = fileMap[file][0];
+  		var lastTextEvent = fileMap[file][fileMap[file].length - 1];
+
+  		return getWordDiffSize(firstTextEvent.currText, lastTextEvent.currText);
+  	});
+
+  	return sizeArray.reduce(function(a, b){a + b});
+  }
+
   function timestampMetric(cycle){
   	if (cycle == null) {return 0};
 
