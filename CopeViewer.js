@@ -80,7 +80,7 @@
 				$('#'+selectionRow+" "+"#"+selectionStart).removeClass("firstSelection").addClass("midSelection");
 				selectionStart = prevTextChange;
 				$("#a").empty().text(allJSONData[selectionStart].currText);
-				changed();
+				// changed();
 				addRightClickHandler('#'+selectionRow+" "+"#"+prevTextChange);
 			}
 		}
@@ -93,7 +93,7 @@
 				$('#'+selectionRow+" "+"#"+selectionStart).removeClass("firstSelection midSelection");
 				selectionStart = nextTextChange;
 				$("#a").empty().text(allJSONData[selectionStart].currText);
-				changed();
+				// changed();
 				$.contextMenu('destroy','#'+selectionRow+" "+"#"+selectionStart);
 			}
 		}
@@ -105,7 +105,7 @@
 				$('#'+selectionRow+" "+"#"+selectionEnd).removeClass("lastSelection midSelection");
 				selectionEnd = prevTextChange;
 				$("#b").empty().text(allJSONData[selectionEnd].currText);
-				changed();
+				// changed();
 				$.contextMenu('destroy','#'+selectionRow+" "+"#"+selectionEnd);
 			}
 		}
@@ -116,7 +116,7 @@
 			$('#'+selectionRow+" "+"#"+selectionEnd).removeClass("lastSelection").addClass("midSelection");
 			selectionEnd = nextTextChange;
 			$("#b").empty().text(allJSONData[selectionEnd].currText);
-			changed();
+			// changed();
 			addRightClickHandler('#'+selectionRow+" "+"#"+nextTextChange);
 		}
 
@@ -227,9 +227,36 @@
 			}else{
 				$("#a").empty().text(JSON.stringify(allJSONData[Idx]));
 			}
-			changed();
+			//changed();
 		}
 
+	function prettyInit(){
+	//Handle Text Changes
+		var firstTextEvent;
+		for(var j = 0; j< allJSONData.length;j++){
+			// if(allJSONData[j])
+			//console.log(allJSONData[j]);
+			if(allJSONData[j].eventType == "textChange"){
+				firstTextEvent = j;
+				break;
+			}
+		}
+		console.log("j"+j)
+		var first = findFirstTextChange(firstTextEvent);
+		var last = findLastTextChange(firstTextEvent);
+		//createSelection(first,(''));
+		$("#a").empty().text(allJSONData[first].currText);
+		$("#b").empty().text(allJSONData[last].currText);
+			// if(allJSONData[Idx].eventType === "textChange"){
+			// 	var first = findFirstTextChange(Idx);
+			// 	var last = findLastTextChange(Idx);
+			// 	createSelection(first,last,element);
+			// 	$("#a").empty().text(allJSONData[first].currText);
+			// 	$("#b").empty().text(allJSONData[last].currText);
+			// }else{
+			// 	$("#a").empty().text(JSON.stringify(allJSONData[Idx]));
+			// }
+	}
 		
 
 		function addRightClickHandler(elem){
@@ -835,6 +862,8 @@
 		return TDDPulse;
 	}
 
+
+
 	function testBuildTDDPulse(){
 		var red1 = {CycleType : "red"};
 		var green1 = {CycleType : "green"};
@@ -878,11 +907,14 @@
   			$('#allEvents').append("<div class='rowContainer' id='"+key+"Row'><div class='spacer'><div class='rowLabel'>"+key+"</div></div><div class='fileRow' id='" + getSafePath(key) + "' ></div></div>");   
   		});
 
+  		prettyInit();
   		$.each( allJSONData, function( key, val ) {
   			addEvent(val,key);
   		});
 
   		loadCyclesFromServer();
+
+
   	});
   });
 
