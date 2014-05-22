@@ -33,9 +33,13 @@ var margin = {top: 20, right: 20, bottom: 30, left: 50},
 	  .enter().append("path")
 	    .attr("class", "link")
 	    .attr("d", d3.hive.link()
-	    .angle(function(d) { return angle(d.x);})
-	    .startRadius(function(d) { return radius(d.y0); })
-	    .endRadius(function(d) { return radius(d.y1); }))
+	    .angle(function(d) { 
+	    	return angle(d.x);
+	    })
+	    .startRadius(function(d) { 
+	    	return radius(d.y0); })
+	    .endRadius(function(d) { return radius(d.y1); 
+	    }))
 	    .style("fill", function(d) { return color(d.group);
 	  });
 

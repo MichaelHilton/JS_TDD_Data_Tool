@@ -677,11 +677,35 @@
 
   function buildpulseChart(TDDPulse, metricFunction){
   	var metrics = mapPulseArrayToMetrics(TDDPulse, metricFunction);
+	var my_pulsePlot = pulsePlot().width(100).height(100).innerRadius(5).outerRadius(50);
 
   	TDDPulse.forEach(function(pulse, index){
   		$('#PulseArea').append("<div class='pulseChart' id='pulse" + index + "'></div>");
+		var data = createHiveData(metrics[index].red,metrics[index].green,metrics[index].blue);
+  		d3.select("#pulse" + index + "")
+		      .datum(data)
+		      .call(my_pulsePlot);
 
   	});
+  }
+
+  function createHiveData(red,green,blue){
+  	if(blue == 0){
+  		blue = 0.001;
+  	}
+  	if(red == 0){
+  		red = 0.001;
+  	}
+  	if(green == 0){
+  		green = 0.001;
+  	}
+
+  	var data = [
+		  {source: {x: 0, y0: 0.0, y1: red}, target: {x: 1, y0: 0.0, y1: red}, group:  3},
+		  {source: {x: 1, y0: 0.0, y1: green}, target: {x: 2, y0: 0.0, y1: green}, group:  7},
+		  {source: {x: 2, y0: 0.0, y1: blue}, target: {x: 0, y0: 0.0, y1: blue}, group: 11}
+		];
+		return data;
   }
 
   function loadCyclesFromServer(){
