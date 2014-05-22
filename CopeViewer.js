@@ -679,8 +679,10 @@
   	var metrics = mapPulseArrayToMetrics(TDDPulse, metricFunction);
 	var my_pulsePlot = pulsePlot().width(100).height(100).innerRadius(5).outerRadius(50).click(function(){
 		// console.log("CLICK");
+		unselectAllPulses();
 		$('.pulseChart').removeClass("clickedPulsePlot");
 		$("#"+this.parentElement.id).addClass("clickedPulsePlot");
+		selectPulseinCycles(this.parentElement.id);
 	}).hover(function(){
 		$('.pulseChart').removeClass("hoveredPulsePlot");
 		$("#"+this.parentElement.id).addClass("hoveredPulsePlot");
@@ -694,6 +696,16 @@
 		      .call(my_pulsePlot);
 
   	});
+  }
+
+  function unselectAllPulses(){
+
+  }
+
+  function selectPulseinCycles(elem){
+  	console.log(elem.substr(5));
+  	$('#TDDCycles').slice(10,20).addClass(".selected");
+  	$('#TDDCycles').slice(50,90).addClass(".unselected");
   }
 
   function createHiveData(red,green,blue){
@@ -737,7 +749,7 @@
 
   	function groupCycles(TDDPulse){
   		TDDPulse.forEach(function(currPulse){
-			console.log(currPulse);
+			// console.log(currPulse);
 			$('#TDD'+currPulse.red.CycleStart).addClass("startTDDPulse");
 			if(currPulse.blue == null){
 				$('#TDD'+currPulse.green.CycleEnd).addClass("endTDDPulse");
