@@ -675,11 +675,11 @@
   	return metricArray;
   }
 
-  function buildPulseChart(TDDPulse, metricFunction){
+  function buildpulseChart(TDDPulse, metricFunction){
   	var metrics = mapPulseArrayToMetrics(TDDPulse, metricFunction);
 
   	TDDPulse.forEach(function(pulse, index){
-  		$('#pulseCharts').append("<div class='pulseChart' id='pulse" + index + "'></div>");
+  		$('#PulseArea').append("<div class='pulseChart' id='pulse" + index + "'></div>");
 
   	});
   }
@@ -698,7 +698,7 @@
 
 			   		TDDPulse = buildTDDPulse(TDDCycles);
 
-			   		buildPulseChart(TDDPulse, timestampMetric);
+			   		buildpulseChart(TDDPulse, timestampMetric);
 			   	}
 			},
 		});
