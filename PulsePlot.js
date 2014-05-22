@@ -35,7 +35,11 @@ var margin = {top: 20, right: 20, bottom: 30, left: 50},
 
 	 			var angle = d3.scale.ordinal().domain(d3.range(4)).rangePoints([0, 2 * Math.PI]),
 	    radius = d3.scale.linear().range([innerRadius, outerRadius]),
-	    color = d3.scale.category20c().domain(d3.range(20));
+	    //color = d3.scale.category20c().domain(d3.range(20));
+	    color = d3.scale.ordinal().range(["#af292e","#4e7300","#385e86"]);
+
+
+
 
 	 // Select the svg element, if it exists.
       var svg = d3.select(this).selectAll("svg").data([data]);
@@ -73,7 +77,9 @@ var margin = {top: 20, right: 20, bottom: 30, left: 50},
 	    	 })
 	    .startRadius(function(d) { return radius(d.y0); })
 	    .endRadius(function(d) { return radius(d.y1); }))
-	    .style("fill", function(d) { return color(d.group); });
+	    .style("fill", function(d) {
+	     return color(d.group);
+	      });
 
 	g.selectAll(".axis")
 	    .data(d3.range(3))
