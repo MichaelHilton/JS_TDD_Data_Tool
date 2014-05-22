@@ -678,11 +678,12 @@
   function buildpulseChart(TDDPulse, metricFunction){
   	var metrics = mapPulseArrayToMetrics(TDDPulse, metricFunction);
 	var my_pulsePlot = pulsePlot().width(100).height(100).innerRadius(5).outerRadius(50).click(function(){
-		console.log("CLICK");
+		// console.log("CLICK");
 		$('.pulseChart').removeClass("clickedPulsePlot");
 		$("#"+this.parentElement.id).addClass("clickedPulsePlot");
 	}).hover(function(){
-		console.log("hover");
+		$('.pulseChart').removeClass("hoveredPulsePlot");
+		$("#"+this.parentElement.id).addClass("hoveredPulsePlot");
 	});
 
   	TDDPulse.forEach(function(pulse, index){

@@ -97,11 +97,22 @@ height: 40px;
 	height: 100px;
 	float: left;
 	/*background: red;*/
-	/*border:1px solid black;*/
+	border:1px #EEE;
+	opacity:.6;
+
 }
 
 .pulseChart.clickedPulsePlot{
 	background-color:#DDD;
+	border:1px #999;
+	border-radius:8px;
+	opacity:1;
+}
+
+
+
+.pulseChart.hoveredPulsePlot{
+	background-color:#FFF;
 /*	border:2px solid;*/
 	border-radius:8px;
 }
