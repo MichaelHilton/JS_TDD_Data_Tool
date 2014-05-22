@@ -682,10 +682,11 @@
 		$('.pulseChart').removeClass("clickedPulsePlot");
 		$("#"+this.parentElement.id).addClass("clickedPulsePlot");
 		selectPulseinCycles(this.parentElement.id);
-	}).hover(function(){
-		$('.pulseChart').removeClass("hoveredPulsePlot");
-		$("#"+this.parentElement.id).addClass("hoveredPulsePlot");
 	});
+		//.hover(function(){
+	// 	$('.pulseChart').removeClass("hoveredPulsePlot");
+	// 	$("#"+this.parentElement.id).addClass("hoveredPulsePlot");
+	// });
 
   	TDDPulse.forEach(function(pulse, index){
   		$('#PulseArea').append("<div class='pulseChart' id='pulse" + index + "'></div>");
