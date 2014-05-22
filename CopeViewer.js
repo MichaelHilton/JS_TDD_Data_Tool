@@ -690,13 +690,13 @@
   }
 
   function createHiveData(red,green,blue){
-  	if(blue == 0){
+  	if(blue == 0 || isNaN(blue)){
   		blue = 0.001;
   	}
-  	if(red == 0){
+  	if(red == 0 || isNaN(red)){
   		red = 0.001;
   	}
-  	if(green == 0){
+  	if(green == 0 || isNaN(green)){
   		green = 0.001;
   	}
 
