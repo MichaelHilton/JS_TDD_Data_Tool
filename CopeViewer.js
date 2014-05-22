@@ -3,6 +3,16 @@
 		var filename;
 		var fileNames = {};
 
+		function updateTDDCycleStart(index,cycleStart){
+ 			TDDCycles[index].CycleStart = cycleStart;
+ 			TDDCycles[index].id = cycleStart+""+TDDCycles[index].CycleEnd;
+		}
+
+		function updateTDDCycleEnd(index,cycleEnd){
+			TDDCycles[index].CycleEnd = cycleEnd;
+			TDDCycles[index].id = TDDCycles[index].CycleStart+""+cycleEnd;
+		}
+
 		function findFirstTextChange(Idx){
 			while(Idx > 0 && allJSONData[Idx].eventType === "textChange"){
 				 Idx--;
@@ -112,7 +122,7 @@
 
 
 		function shiftCycleStartLeft(index){
-			console.log("ShiftCycleStartLeft");
+			// console.log("ShiftCycleStartLeft");
 			var currSpot = Number(TDDCycles[index].CycleStart);
 			var nextSpot = currSpot-1;
 			
@@ -139,12 +149,13 @@
 			$('#TDD'+nextSpot).addClass("CycleStartSelection "+ currCycleColor+ " "+ currCycleID);
 			$('#TDD'+nextSpot).bind("click",{currIdx:index},selectCycleListener);
 
-			TDDCycles[index].CycleStart = nextSpot;
+			// TDDCycles[index].CycleStart = nextSpot;
+			updateTDDCycleStart(index,nextSpot);
 			addCycleRightClickHandler("#TDD"+nextSpot);
 		}
 
 		function shiftCycleStartRight(index){
-			console.log("shiftCycleStartRight");
+			// console.log("shiftCycleStartRight");
 			var currSpot = Number(TDDCycles[index].CycleStart);
 			var nextSpot = currSpot+1;
 			if(nextSpot >= Number(TDDCycles[index].CycleEnd)){
@@ -153,12 +164,13 @@
 			$('#TDD'+currSpot).removeClass("CycleStartSelection "+" GREENCYCLE REDCYCLE BLUECYCLE "+ TDDCycles[index].id);
 			$('#TDD'+nextSpot).removeClass("CycleMidSelection").addClass("CycleStartSelection");
 			$('#TDD'+currSpot).unbind();
-			TDDCycles[index].CycleStart = nextSpot;
+			//TDDCycles[index].CycleStart = nextSpot;
+			updateTDDCycleStart(index,nextSpot);
 			$.contextMenu('destroy','#TDD'+currSpot);
 
 		}
 		function shiftCycleEndLeft(index){
-			console.log("shiftCycleEndLeft");
+			// console.log("shiftCycleEndLeft");
 			var currSpot = Number(TDDCycles[index].CycleEnd);
 			var nextSpot = currSpot-1;
 			if(nextSpot <= Number(TDDCycles[index].CycleStart)){
@@ -167,11 +179,12 @@
 			$('#TDD'+currSpot).removeClass("CycleEndSelection "+" GREENCYCLE REDCYCLE BLUECYCLE "+ TDDCycles[index].id);
 			$('#TDD'+nextSpot).removeClass("CycleMidSelection").addClass("CycleEndSelection");
 			$('#TDD'+currSpot).unbind();
-			TDDCycles[index].CycleEnd = nextSpot;
+			updateTDDCycleEnd(index,nextSpot);
+			// TDDCycles[index].CycleEnd = nextSpot;
 			$.contextMenu('destroy','#TDD'+currSpot);
 		}
 		function shiftCycleEndRight(index){
-			console.log("shiftCycleEndRight");
+			// console.log("shiftCycleEndRight");
 			var currSpot = Number(TDDCycles[index].CycleEnd);
 			var nextSpot = currSpot+1;
 			if(index<(TDDCycles.length-1)){
@@ -197,7 +210,8 @@
 			$('#TDD'+nextSpot).addClass("CycleEndSelection "+ currCycleColor+ " "+ currCycleID);
 			$('#TDD'+nextSpot).bind("click",{currIdx:index},selectCycleListener);
 
-			TDDCycles[index].CycleEnd = nextSpot;
+			updateTDDCycleEnd(index,nextSpot);
+			//TDDCycles[index].CycleEnd = nextSpot;
 			addCycleRightClickHandler("#TDD"+nextSpot);
 
 		}
@@ -358,15 +372,8 @@
 	}
 
 	function selectCycleListener(element){
-		console.log(element.data.currIdx);
-		//var selectedCycleIndex = element.data.currIdx;
-
-		var selectedCycleIndex;
-		for(var i = 0; i < TDDCycles.length;i++){
-			if(TDDCycles[i].id === element.data.currId){
-				selectedCycleIndex = i;
-			}
-		}
+		// console.log(element.data.currIdx);
+		var selectedCycleIndex = element.data.currIdx;
 
 		var start = TDDCycles[selectedCycleIndex].CycleStart;
 		var end = TDDCycles[selectedCycleIndex].CycleEnd;
@@ -683,10 +690,10 @@
 	  		dataType: 'json',
 	  		success: function( data ) {
 	  			if(data === null){
-	  				console.log("No TDD Cycles saved");
+	  				//console.log("No TDD Cycles saved");
 	  			}else{
 			  		TDDCycles = data;
-			 	  	console.log(TDDCycles);
+			 	  	//console.log(TDDCycles);
 			   		addColorandListeners();
 
 			   		TDDPulse = buildTDDPulse(TDDCycles);

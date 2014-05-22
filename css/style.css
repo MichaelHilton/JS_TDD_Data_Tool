@@ -9,13 +9,13 @@ html, body {
 	font-family: "Helvetica";
 }
 body {
-	padding-top: 1.8em;
+	/*padding-top: 1.8em;*/
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 html, body, table, tbody, tr, td {
-	height: 93%
+	height: 80%
 }
 table {
 	table-layout: fixed;
@@ -100,12 +100,37 @@ height: 40px;
 	border:1px solid black;
 }
 
+#PulseArea{
+	width:100%;
+	height: 110px;
+	padding-top: 10px;
+}
+
+.arc {
+  fill-opacity: .2;
+}
+
+.axis .fill {
+  stroke: #aaa;
+  stroke-width: 8px;
+  stroke-linecap: square;
+}
+
+.axis .stroke {
+  stroke: #fff;
+  stroke-width: 12px;
+  stroke-linecap: square;
+}
+
 #bottomBar{
 	width:100%;
 	height:190px;
 	overflow-x: scroll;
 	
 }
+
+
+
 .eventDiv{
 	width:8px;
 	height:20px;
