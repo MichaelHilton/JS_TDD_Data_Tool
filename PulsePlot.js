@@ -23,8 +23,8 @@ function pulsePlot() {
 var margin = {top: 20, right: 20, bottom: 30, left: 50},
  	width = 200,
     height = 200,
-    innerRadius = 40,
-    outerRadius = 240;
+    innerRadius = 10,
+    outerRadius = 100;
 
 
 
