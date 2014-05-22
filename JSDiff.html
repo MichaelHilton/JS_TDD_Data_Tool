@@ -15,7 +15,8 @@
 	<link href="css/ui-lightness/jquery-ui-1.10.4.css" rel="stylesheet">
 
 	<script src="http://d3js.org/d3.v3.js"></script>
-	<script type="text/javascript" src="SampleRadarChart.js"></script>
+	<script src="http://d3js.org/d3.hive.v0.min.js"></script>
+	<script type="text/javascript" src="PulsePlot.js"></script>
 
 </head>
 <body>
@@ -125,12 +126,19 @@
 
 		//RADAR CHART
 		//Data
-		var d2 = [
-		   [
-			{axis:"Red",value:0.48},
-			{axis:"Green",value:0.41},
-			{axis:"Refactor",value:0.27},
-		  ]
+		var data = [
+		  // {source: {x: 0, y0: 0.9, y1: 1.0}, target: {x: 1, y0: 0.5, y1: 1.0}, group:  0},
+		  // {source: {x: 0, y0: 0.7, y1: 0.9}, target: {x: 1, y0: 0.4, y1: 0.5}, group:  1},
+		  // {source: {x: 0, y0: 0.4, y1: 0.7}, target: {x: 1, y0: 0.2, y1: 0.4}, group:  2},
+		  {source: {x: 0, y0: 0.0, y1: 0.4}, target: {x: 1, y0: 0.0, y1: 0.4}, group:  3},
+		  // {source: {x: 1, y0: 0.8, y1: 1.0}, target: {x: 2, y0: 0.5, y1: 1.0}, group:  4},
+		  // {source: {x: 1, y0: 0.5, y1: 0.8}, target: {x: 2, y0: 0.2, y1: 0.5}, group:  5},
+		  // {source: {x: 1, y0: 0.3, y1: 0.5}, target: {x: 2, y0: 0.1, y1: 0.2}, group:  6},
+		  {source: {x: 1, y0: 0.0, y1: 0.3}, target: {x: 2, y0: 0.0, y1: 0.3}, group:  7},
+		  // {source: {x: 2, y0: 0.8, y1: 1.0}, target: {x: 0, y0: 0.5, y1: 1.0}, group:  8},
+		  // {source: {x: 2, y0: 0.5, y1: 0.8}, target: {x: 0, y0: 0.2, y1: 0.5}, group:  9},
+		  // {source: {x: 2, y0: 0.1, y1: 0.5}, target: {x: 0, y0: 0.1, y1: 0.2}, group: 10},
+		  {source: {x: 2, y0: 0.0, y1: 0.1}, target: {x: 0, y0: 0.0, y1: 0.1}, group: 11}
 		];
 
 
@@ -143,11 +151,26 @@
 		  ExtraWidthX: 300
 		}
 
-		//Call function to draw the Radar chart
-		//Will expect that data is in %'s
-		RadarChart.draw("#chart", d2, mycfg2);
+		// //Call function to draw the Radar chart
+		// //Will expect that data is in %'s
+				// PulsePlot.draw("#chart", d2, mycfg2);
 
+		//initialize the chart with a width and height, xdata function and y data function.
+		// var myChart = pulsePlot().width(400).height(200);
+
+		var myChart = pulsePlot().width(800).height(400);
 		
+		d3.select("#chart")
+		      .datum(data)
+		      .call(myChart);
+
+		// //Attach the datum, and then draw the chart.  In this example we are using data.tsv
+		// d3.tsv("data.tsv", function(error, data) {
+		//   d3.select("#areaChartDiv")
+		//       .datum(data)
+		//       .call(myChart);
+		//   });
+				
 
 
 	</script>

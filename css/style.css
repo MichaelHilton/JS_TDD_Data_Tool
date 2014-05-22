@@ -90,15 +90,39 @@ height: 40px;
 
 #PulseArea{
 	width:100%;
-	height: 490px;
+	height: 300px;
 	/*background-color: yellow;*/
 }
+
+
+
+.arc {
+  fill-opacity: .2;
+}
+
+.axis .fill {
+  stroke: #aaa;
+  stroke-width: 8px;
+  stroke-linecap: square;
+}
+
+.axis .stroke {
+  stroke: #fff;
+  stroke-width: 12px;
+  stroke-linecap: square;
+}
+
+
+
 #bottomBar{
 	width:100%;
 	height:190px;
 	overflow-x: scroll;
 	
 }
+
+
+
 .eventDiv{
 	width:8px;
 	height:20px;
