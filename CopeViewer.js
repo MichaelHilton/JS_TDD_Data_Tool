@@ -561,9 +561,38 @@
   	return(fileNames);
   }
 
+  function stringEndsWith(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+  }
+
   //given a cycle, construct mappings like file -> [event, ...] for all files touched in the cycle
   function computeSourceFileTextEventMap(cycle){
-  	return {};
+  	var fileMap = {};
+
+  	var start = parseInt(cycle.CycleStart);
+  	var end = parseInt(cycle.CycleEnd);
+
+  	var sourceTextEvents = allJSONData.slice(start, end + 1).filter(function(anEvent){
+  		if (anEvent.eventType != "textChange") 
+  			return false;
+
+  		if(!stringEndsWith(anEvent.entityAddress, ".java"))
+  			return false;
+  		 
+  		return true;
+  	});
+
+  	sourceTextEvents.forEach(function(anEvent){
+  		var file = anEvent.entityAddress;
+
+  		if (!(file in fileMap)) {
+  			fileMap[file] = [];
+  		}
+
+  		fileMap[file].push(anEvent);
+  	});
+
+  	return fileMap;
   }
 
   //how many words does firstString differ from secondString
