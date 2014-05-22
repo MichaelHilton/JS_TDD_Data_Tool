@@ -1,4 +1,5 @@
 		var TDDCycles = [];
+		var TDDPulse = [];
 		var filename;
 		var fileNames = {};
 
@@ -567,6 +568,121 @@
   	return(fileNames);
   }
 
+  function stringEndsWith(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+  }
+
+  //given a cycle, construct mappings like file -> [event, ...] for all files touched in the cycle
+  function computeSourceFileTextEventMap(cycle){
+  	var fileMap = {};
+
+  	var start = parseInt(cycle.CycleStart);
+  	var end = parseInt(cycle.CycleEnd);
+
+  	var sourceTextEvents = allJSONData.slice(start, end + 1).filter(function(anEvent){
+  		if (anEvent.eventType != "textChange") 
+  			return false;
+
+  		if(!stringEndsWith(anEvent.entityAddress, ".java"))
+  			return false;
+  		 
+  		return true;
+  	});
+
+  	sourceTextEvents.forEach(function(anEvent){
+  		var file = anEvent.entityAddress;
+
+  		if (!(file in fileMap)) {
+  			fileMap[file] = [];
+  		}
+
+  		fileMap[file].push(anEvent);
+  	});
+
+  	return fileMap;
+  }
+
+  function splitInWords(value) {
+    return value.split(/(\s+|\b)/g).filter(function(s){ return s.trim() != "" });
+  };
+
+  //how many words does firstString differ from secondString
+  function getWordDiffSize(firstString, secondString){
+  	var diff = JsDiff.diffWords(firstString, secondString);
+
+  	var diffStrings = diff.filter(function(aDiff){
+  		return (aDiff.added != undefined) || (aDiff.removed != undefined);
+  	})
+  	.map(function(aDiff){return aDiff.value});
+
+  	var wordCount = 0;
+
+  	for (i in diffStrings){
+  		wordCount += splitInWords(diffStrings[i]).length;
+  	}
+
+  	return wordCount;
+  }
+
+  //given a cycle, return how many words were changed in it
+  function wordChangedMetric(cycle){
+  	var fileMap = computeSourceFileTextEventMap(cycle);
+
+  	if (Object.keys(fileMap) == 0) {return 0};
+
+  	var fileWordsChanged = Object.keys(fileMap).map(function(file){
+  		var firstTextEvent = fileMap[file][0];
+  		var lastTextEvent = fileMap[file][fileMap[file].length - 1];
+
+  		return getWordDiffSize(firstTextEvent.currText, lastTextEvent.currText);
+  	});
+
+  	return fileWordsChanged.reduce(function(a, b){a + b});
+  }
+
+  //given a cycle, return how long it took
+  function timestampMetric(cycle){
+  	if (cycle == null) {return 0};
+
+  	var startingEvent = allJSONData[cycle.CycleStart];
+  	var endingEvent = allJSONData[cycle.CycleEnd];
+
+  	return Math.abs(endingEvent.timestamp - startingEvent.timestamp);
+  }
+
+  //map an array of pulses to an array of pulse metrics
+  function mapPulseArrayToMetrics(TDDPulse, metricFunction){
+  	var metricArray = [];
+
+  	var maxRed = Number.MIN_VALUE;
+  	var maxGreen = Number.MIN_VALUE;
+  	var maxBlue = Number.MIN_VALUE;
+
+	TDDPulse.forEach(function(pulse){
+		if (metricFunction(pulse.red) > maxRed) {maxRed = metricFunction(pulse.red)};
+		if (metricFunction(pulse.green) > maxGreen) {maxGreen = metricFunction(pulse.green)};
+		if (metricFunction(pulse.blue) > maxBlue) {maxBlue = metricFunction(pulse.blue)};
+	});  	
+
+  	TDDPulse.forEach(function(pulse){
+  		var redMetric = metricFunction(pulse.red) / maxRed;
+  		var greenMetric = metricFunction(pulse.green) / maxGreen;
+  		var blueMetric = metricFunction(pulse.blue) / maxBlue;
+
+  		metricArray.push({red : redMetric, green : greenMetric, blue : blueMetric});
+  	});
+
+  	return metricArray;
+  }
+
+  function buildPulseChart(TDDPulse, metricFunction){
+  	var metrics = mapPulseArrayToMetrics(TDDPulse, metricFunction);
+
+  	TDDPulse.forEach(function(pulse, index){
+  		$('#pulseCharts').append("<div class='pulseChart' id='pulse" + index + "'></div>");
+
+  	});
+  }
 
   function loadCyclesFromServer(){
 	  	$.ajax({
@@ -579,10 +695,118 @@
 			  		TDDCycles = data;
 			 	  	//console.log(TDDCycles);
 			   		addColorandListeners();
+
+			   		TDDPulse = buildTDDPulse(TDDCycles);
+
+			   		buildPulseChart(TDDPulse, timestampMetric);
 			   	}
 			},
 		});
   	}
+
+  	function shallowClone(obj){
+  		return jQuery.extend({}, obj);
+  	}
+
+	function buildTDDPulse(cycles){
+		var TDDPulse = [];
+
+		var initState = "init";
+		var redState = "red";
+		var greenState = "green";
+		var currentState = initState;
+
+		var emptyPulsePrototype = {"red" : null, "green" : null, "blue" : null};
+		var currentPulse = shallowClone(emptyPulsePrototype);
+
+		function doInitState(cycle){
+			if (cycle.CycleType === "red"){
+				currentState = redState;
+				currentPulse.red = cycle;
+			};
+			
+			return 1;
+		}
+
+		function doRedState(cycle){
+			if (cycle.CycleType === "green") {
+				currentState = greenState;
+				currentPulse.green = cycle;
+			}else{
+				currentState = initState;
+			};
+
+			return 1;
+		}
+
+		function doGreenState(cycle){
+			var advancement;
+
+			if (cycle.CycleType === "blue") {
+				currentPulse.blue = cycle;
+				advancement = 1;
+			} else{
+				advancement = 0;
+			}
+
+			currentState = initState;
+
+			TDDPulse.push(currentPulse);
+			currentPulse = shallowClone(emptyPulsePrototype);
+
+			return advancement;
+		}
+
+		var i = 0;
+		while(i < cycles.length){
+			var currentCycle = cycles[i];
+			var advancement = 1;
+
+			if (currentState === initState)
+				advancement = doInitState(currentCycle);
+
+			else if (currentState === redState)
+				advancement = doRedState(currentCycle);
+
+			else if (currentState === greenState)
+				advancement = doGreenState(currentCycle);
+
+			i += advancement;
+		}
+
+		return TDDPulse;
+	}
+
+	function testBuildTDDPulse(){
+		var red1 = {CycleType : "red"};
+		var green1 = {CycleType : "green"};
+		var blue1 = {CycleType : "blue"};
+
+		var red2 = {CycleType : "red"};
+		var green2 = {CycleType : "green"};
+
+		var red3 = {CycleType : "red"};
+		var green3 = {CycleType : "green"};
+		var blue3 = {CycleType : "blue"};
+
+
+		var cycles = [{CycleType : "blue"}, 
+						red1, 
+						green1, 
+						blue1, 
+						{CycleType : "red"}, 
+						{CycleType : "red"}, 
+						red2, 
+						green2, 
+						red3, 
+						green3, 
+						blue3
+					];
+
+		var expected = [{"red" : red1, "green" : green1, "blue" : blue1}, {"red" : red2, "green" : green2, "blue" : null}, {"red" : red3, "green" : green3, "blue" : blue3}];
+
+		console.debug(buildTDDPulse(cycles));
+	}
 
  //Read in data of all changes
   $(document).ready(function(){
@@ -599,6 +823,7 @@
   		$.each( allJSONData, function( key, val ) {
   			addEvent(val,key);
   		});
+
   		//addListeners();
   		loadCyclesFromServer();
   	});

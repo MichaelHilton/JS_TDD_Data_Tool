@@ -88,16 +88,23 @@ height: 40px;
 	}
 }
 
+#pulseCharts{
+	overflow-x: scroll;
+}
+
+.pulseChart{
+	width: 100px;
+	height: 100px;
+	float: left;
+	background: red;
+	border:1px solid black;
+}
+
 #PulseArea{
 	width:100%;
 	height: 110px;
 	padding-top: 10px;
 }
-
-.PulseChart{
-	float:left;
-}
-
 
 .arc {
   fill-opacity: .2;
@@ -114,8 +121,6 @@ height: 40px;
   stroke-width: 12px;
   stroke-linecap: square;
 }
-
-
 
 #bottomBar{
 	width:100%;
