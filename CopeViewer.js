@@ -595,26 +595,45 @@
   	return fileMap;
   }
 
+  function splitInWords(value) {
+    return value.split(/(\s+|\b)/g).filter(function(s){ return s.trim() != "" });
+  };
+
   //how many words does firstString differ from secondString
   function getWordDiffSize(firstString, secondString){
-  	return 1;
+  	var diff = JsDiff.diffWords(firstString, secondString);
+
+  	var diffStrings = diff.filter(function(aDiff){
+  		return (aDiff.added != undefined) || (aDiff.removed != undefined);
+  	})
+  	.map(function(aDiff){return aDiff.value});
+
+  	var wordCount = 0;
+
+  	for (i in diffStrings){
+  		wordCount += splitInWords(diffStrings[i]).length;
+  	}
+
+  	return wordCount;
   }
 
+  //given a cycle, return how many words were changed in it
   function wordChangedMetric(cycle){
   	var fileMap = computeSourceFileTextEventMap(cycle);
 
   	if (Object.keys(fileMap) == 0) {return 0};
 
-  	var sizeArray = Object.keys(fileMap).map(function(file){
+  	var fileWordsChanged = Object.keys(fileMap).map(function(file){
   		var firstTextEvent = fileMap[file][0];
   		var lastTextEvent = fileMap[file][fileMap[file].length - 1];
 
   		return getWordDiffSize(firstTextEvent.currText, lastTextEvent.currText);
   	});
 
-  	return sizeArray.reduce(function(a, b){a + b});
+  	return fileWordsChanged.reduce(function(a, b){a + b});
   }
 
+  //given a cycle, return how long it took
   function timestampMetric(cycle){
   	if (cycle == null) {return 0};
 
