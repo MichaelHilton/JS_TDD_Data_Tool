@@ -121,7 +121,7 @@
 
 
 		function shiftCycleStartLeft(index){
-			console.log("ShiftCycleStartLeft");
+			// console.log("ShiftCycleStartLeft");
 			var currSpot = Number(TDDCycles[index].CycleStart);
 			var nextSpot = currSpot-1;
 			
@@ -154,7 +154,7 @@
 		}
 
 		function shiftCycleStartRight(index){
-			console.log("shiftCycleStartRight");
+			// console.log("shiftCycleStartRight");
 			var currSpot = Number(TDDCycles[index].CycleStart);
 			var nextSpot = currSpot+1;
 			if(nextSpot >= Number(TDDCycles[index].CycleEnd)){
@@ -169,7 +169,7 @@
 
 		}
 		function shiftCycleEndLeft(index){
-			console.log("shiftCycleEndLeft");
+			// console.log("shiftCycleEndLeft");
 			var currSpot = Number(TDDCycles[index].CycleEnd);
 			var nextSpot = currSpot-1;
 			if(nextSpot <= Number(TDDCycles[index].CycleStart)){
@@ -183,7 +183,7 @@
 			$.contextMenu('destroy','#TDD'+currSpot);
 		}
 		function shiftCycleEndRight(index){
-			console.log("shiftCycleEndRight");
+			// console.log("shiftCycleEndRight");
 			var currSpot = Number(TDDCycles[index].CycleEnd);
 			var nextSpot = currSpot+1;
 			if(index<(TDDCycles.length-1)){
@@ -371,7 +371,7 @@
 	}
 
 	function selectCycleListener(element){
-		console.log(element.data.currIdx);
+		// console.log(element.data.currIdx);
 		var selectedCycleIndex = element.data.currIdx;
 
 		var start = TDDCycles[selectedCycleIndex].CycleStart;
@@ -574,10 +574,10 @@
 	  		dataType: 'json',
 	  		success: function( data ) {
 	  			if(data === null){
-	  				console.log("No TDD Cycles saved");
+	  				//console.log("No TDD Cycles saved");
 	  			}else{
 			  		TDDCycles = data;
-			 	  	console.log(TDDCycles);
+			 	  	//console.log(TDDCycles);
 			   		addColorandListeners();
 			   	}
 			},
