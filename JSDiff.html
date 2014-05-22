@@ -17,6 +17,7 @@
 	<script src="http://d3js.org/d3.v3.js"></script>
 	<script src="http://d3js.org/d3.hive.v0.min.js"></script>
 	<script type="text/javascript" src="PulsePlot.js"></script>
+	<script src="src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 
 </head>
 <body>
@@ -33,11 +34,24 @@
 		<img id="saveResult" >
 	</div>
 
+
+
 	<div id='tableContainer'>
+
 	<table>
 		<tr>
-			<td contenteditable="true" id="a"></td>
-			<td contenteditable="true" id="b"></td>
+			<td contenteditable="true" id="a">
+					<div id="editorA" class="ace_editor">function foo(items) {
+    					var x = "All this is syntax highlighted";
+    					return x;
+					}</div>
+			</td>
+			<td contenteditable="true" id="b">
+								<div id="editorB" class="ace_editor">function foo(items) {
+    					var x = "All this is syntax highlighted";
+    					return x;
+					}</div>
+				</td>
 			<td><pre id="result"></pre></td>
 		</tr>
 	</table>
@@ -112,6 +126,15 @@
 				changed();
 			}
 		}
+
+		//SETUP ACE
+	    var editora = ace.edit("editorA");
+	    editora.setTheme("ace/theme/GitHub");
+	    editora.getSession().setMode("ace/mode/java");
+
+	    var editorb = ace.edit("editorB");
+	    editorb.setTheme("ace/theme/GitHub");
+	    editorb.getSession().setMode("ace/mode/java");
 
 	</script>
 

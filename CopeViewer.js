@@ -907,7 +907,7 @@
   			$('#allEvents').append("<div class='rowContainer' id='"+key+"Row'><div class='spacer'><div class='rowLabel'>"+key+"</div></div><div class='fileRow' id='" + getSafePath(key) + "' ></div></div>");   
   		});
 
-  		prettyInit();
+  		//prettyInit();
   		$.each( allJSONData, function( key, val ) {
   			addEvent(val,key);
   		});
