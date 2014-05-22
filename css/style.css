@@ -100,10 +100,24 @@ height: 40px;
 	/*border:1px solid black;*/
 }
 
+.pulseChart.clickedPulsePlot{
+	background-color:#DDD;
+/*	border:2px solid;*/
+	border-radius:8px;
+}
+
 #PulseArea{
 	width:100%;
 	height: 110px;
 	padding-top: 10px;
+}
+
+.startTDDPulse{
+	border-radius:10px;
+}
+
+.endTDDPulse{
+border-radius:10px;
 }
 
 .arc {

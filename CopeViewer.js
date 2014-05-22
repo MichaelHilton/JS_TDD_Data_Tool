@@ -677,7 +677,13 @@
 
   function buildpulseChart(TDDPulse, metricFunction){
   	var metrics = mapPulseArrayToMetrics(TDDPulse, metricFunction);
-	var my_pulsePlot = pulsePlot().width(100).height(100).innerRadius(5).outerRadius(50);
+	var my_pulsePlot = pulsePlot().width(100).height(100).innerRadius(5).outerRadius(50).click(function(){
+		console.log("CLICK");
+		$('.pulseChart').removeClass("clickedPulsePlot");
+		$("#"+this.parentElement.id).addClass("clickedPulsePlot");
+	}).hover(function(){
+		console.log("hover");
+	});
 
   	TDDPulse.forEach(function(pulse, index){
   		$('#PulseArea').append("<div class='pulseChart' id='pulse" + index + "'></div>");
@@ -721,12 +727,25 @@
 			   		addColorandListeners();
 
 			   		TDDPulse = buildTDDPulse(TDDCycles);
-
+			   		groupCycles(TDDPulse);
 			   		buildpulseChart(TDDPulse, timestampMetric);
 			   	}
 			},
 		});
   	}
+
+  	function groupCycles(TDDPulse){
+  		TDDPulse.forEach(function(currPulse){
+			console.log(currPulse);
+			$('#TDD'+currPulse.red.CycleStart).addClass("startTDDPulse");
+			if(currPulse.blue == null){
+				$('#TDD'+currPulse.green.CycleEnd).addClass("endTDDPulse");
+			}else{
+				$('#TDD'+currPulse.blue.CycleEnd).addClass("endTDDPulse");
+			}
+		});
+  	}
+
 
   	function shallowClone(obj){
   		return jQuery.extend({}, obj);
@@ -848,10 +867,11 @@
   			addEvent(val,key);
   		});
 
-  		//addListeners();
   		loadCyclesFromServer();
   	});
   });
+
+
 
 
   $(function() {

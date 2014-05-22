@@ -4,7 +4,9 @@ var margin = {top: 20, right: 20, bottom: 30, left: 50},
  	width = 200,
     height = 200,
     innerRadius = 10,
-    outerRadius = 100;
+    outerRadius = 100,
+    click = function(){},
+    hover = function(){};
 
 	var chart = function(selection){
 	  //draw the chart
@@ -47,7 +49,9 @@ var margin = {top: 20, right: 20, bottom: 30, left: 50},
 	    .data(d3.range(3))
 	  .enter().append("g")
 	    .attr("class", "axis")
-	    .attr("transform", function(d) { return "rotate(" + degrees(angle(d)) + ")"; })
+	    .attr("transform", function(d) { return "rotate(" + degrees(angle(d)) + ")"; });
+
+	   svg.on("click",click).on("mouseover",hover);
     });
 }
 
@@ -80,6 +84,18 @@ chart.innerRadius = function(value) {
 chart.outerRadius = function(value) {
 	if (!arguments.length) return outerRadius;
 	outerRadius = value;
+	return chart;
+};
+
+chart.click = function(value) {
+	if (!arguments.length) return click;
+	click = value;
+	return chart;
+};
+
+chart.hover = function(value) {
+	if (!arguments.length) return hover;
+	hover = value;
 	return chart;
 };
 
