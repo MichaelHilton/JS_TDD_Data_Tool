@@ -187,21 +187,7 @@
 		  {source: {x: 1, y0: 0.0, y1: 0.3}, target: {x: 2, y0: 0.0, y1: 0.3}, group:  7},
 		  {source: {x: 2, y0: 0.0, y1: 0.1}, target: {x: 0, y0: 0.0, y1: 0.1}, group: 11}
 		];
-		// //Options for the Radar chart, other than default
-		// var mycfg2 = {
-		//   w: 300,
-		//   h: 300,
-		//   maxValue: 0.6,
-		//   levels: 1,
-		//   ExtraWidthX: 300
-		// }
 
-		// //Call function to draw the Radar chart
-		// //Will expect that data is in %'s
-				// PulsePlot.draw("#chart", d2, mycfg2);
-
-		//initialize the chart with a width and height, xdata function and y data function.
-		// var myChart = pulsePlot().width(400).height(200);
 
 		var myChart = pulsePlot().width(100).height(100);
 		
@@ -240,14 +226,6 @@
 		d3.select("#chart9")
 		      .datum(data9)
 		      .call(myChart);
-
-		// //Attach the datum, and then draw the chart.  In this example we are using data.tsv
-		// d3.tsv("data.tsv", function(error, data) {
-		//   d3.select("#areaChartDiv")
-		//       .datum(data)
-		//       .call(myChart);
-		//   });
-				
 
 
 	</script>
