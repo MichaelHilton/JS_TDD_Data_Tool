@@ -679,7 +679,6 @@
   	var metrics = mapPulseArrayToMetrics(TDDPulse, metricFunction);
 	var my_pulsePlot = pulsePlot().width(100).height(100).innerRadius(5).outerRadius(50).click(function(){
 		// console.log("CLICK");
-		unselectAllPulses();
 		$('.pulseChart').removeClass("clickedPulsePlot");
 		$("#"+this.parentElement.id).addClass("clickedPulsePlot");
 		selectPulseinCycles(this.parentElement.id);
@@ -698,14 +697,16 @@
   	});
   }
 
-  function unselectAllPulses(){
-
-  }
-
   function selectPulseinCycles(elem){
-  	console.log(elem.substr(5));
-  	$('#TDDCycles').slice(10,20).addClass(".selected");
-  	$('#TDDCycles').slice(50,90).addClass(".unselected");
+  	$('#TDDCycles').children().removeClass("unselected");
+  	var currPulse = TDDPulse[Number(elem.substr(5))];
+  	
+  	$('#TDDCycles').children().slice(0,currPulse.red.CycleStart).addClass("unselected");
+  	if(currPulse.blue == null){
+  		$('#TDDCycles').children().slice((Number(currPulse.green.CycleEnd)+1),$('#TDDCycles').children().length).addClass("unselected");
+  	}else{
+  		$('#TDDCycles').children().slice((Number(currPulse.blue.CycleEnd)+1),$('#TDDCycles').children().length).addClass("unselected");
+  	}
   }
 
   function createHiveData(red,green,blue){

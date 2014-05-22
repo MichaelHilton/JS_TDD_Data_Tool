@@ -265,12 +265,8 @@ width: 2px;
 	border-bottom: 1px solid black;
 }
 
-.selected{
-
-}
-
 .unselected{
-	opacity:.7;
+	opacity:.6;
 }
 /*#TDDCycles .placeHolder.REDCYCLE{
 	width:8px;
