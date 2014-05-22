@@ -73,21 +73,21 @@ var RadarChart = {
 	}
 
 	//Text indicating at what % each level is
-	for(var j=0; j<cfg.levels; j++){
-	  var levelFactor = cfg.factor*radius*((j+1)/cfg.levels);
-	  g.selectAll(".levels")
-	   .data([1]) //dummy data
-	   .enter()
-	   .append("svg:text")
-	   .attr("x", function(d){return levelFactor*(1-cfg.factor*Math.sin(0));})
-	   .attr("y", function(d){return levelFactor*(1-cfg.factor*Math.cos(0));})
-	   .attr("class", "legend")
-	   .style("font-family", "sans-serif")
-	   .style("font-size", "10px")
-	   .attr("transform", "translate(" + (cfg.w/2-levelFactor + cfg.ToRight) + ", " + (cfg.h/2-levelFactor) + ")")
-	   .attr("fill", "#737373")
-	   .text(Format((j+1)*cfg.maxValue/cfg.levels));
-	}
+	// for(var j=0; j<cfg.levels; j++){
+	//   var levelFactor = cfg.factor*radius*((j+1)/cfg.levels);
+	//   g.selectAll(".levels")
+	//    .data([1]) //dummy data
+	//    .enter()
+	//    .append("svg:text")
+	//    .attr("x", function(d){return levelFactor*(1-cfg.factor*Math.sin(0));})
+	//    .attr("y", function(d){return levelFactor*(1-cfg.factor*Math.cos(0));})
+	//    .attr("class", "legend")
+	//    .style("font-family", "sans-serif")
+	//    .style("font-size", "10px")
+	//    .attr("transform", "translate(" + (cfg.w/2-levelFactor + cfg.ToRight) + ", " + (cfg.h/2-levelFactor) + ")")
+	//    .attr("fill", "#737373");
+	//    .text(Format((j+1)*cfg.maxValue/cfg.levels));
+	// }
 	
 	series = 0;
 
@@ -103,7 +103,7 @@ var RadarChart = {
 		.attr("x2", function(d, i){return cfg.w/2*(1-cfg.factor*Math.sin(i*cfg.radians/total));})
 		.attr("y2", function(d, i){return cfg.h/2*(1-cfg.factor*Math.cos(i*cfg.radians/total));})
 		.attr("class", "line")
-		.style("stroke", "grey")
+		.style("stroke", "red")
 		.style("stroke-width", "1px");
 
 	axis.append("text")
