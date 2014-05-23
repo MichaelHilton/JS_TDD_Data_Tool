@@ -232,6 +232,7 @@
 
 
 			}else{
+				createSelection(Idx,Idx,element);
 			//	$("#a").empty().text(JSON.stringify(allJSONData[Idx]));
 			//TODO ADD ELEGENT EVENT HANDELING
 			//JSON.stringify(jsonDoc, null, '\t')
