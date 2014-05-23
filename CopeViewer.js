@@ -876,6 +876,8 @@
 			i += advancement;
 		}
 
+		if (currentState === greenState) {doGreenState({CycleType : "endCycle"})};
+
 		return TDDPulse;
 	}
 
