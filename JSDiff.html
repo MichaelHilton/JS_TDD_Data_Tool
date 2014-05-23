@@ -17,20 +17,12 @@
 	<script src="http://d3js.org/d3.v3.js"></script>
 	<script src="http://d3js.org/d3.hive.v0.min.js"></script>
 	<script type="text/javascript" src="PulsePlot.js"></script>
+	<script src="src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
 
 </head>
 <body>
 
 	<div id="PulseArea">
-<!-- 	 <div id="chart1" class="pulseChart"></div>
-	 <div id="chart2" class="pulseChart"></div>
-	 <div id="chart3" class="pulseChart"></div>
-	 <div id="chart4" class="pulseChart"></div>
-	 <div id="chart5" class="pulseChart"></div>
-	 <div id="chart6" class="pulseChart"></div>
-	 <div id="chart7" class="pulseChart"></div>
-	 <div id="chart8" class="pulseChart"></div>
-	 <div id="chart9" class="pulseChart"></div> -->
 	</div>
 
 	<div id="settings">
@@ -42,11 +34,24 @@
 		<img id="saveResult" >
 	</div>
 
+
+
 	<div id='tableContainer'>
+
 	<table>
 		<tr>
-			<td contenteditable="true" id="a">restaurant</td>
-			<td contenteditable="true" id="b">aura</td>
+			<td contenteditable="true" id="a">
+					<div id="editorA" class="ace_editor">function foo(items) {
+    					var x = "All this is syntax highlighted";
+    					return x;
+					}</div>
+			</td>
+			<td contenteditable="true" id="b">
+								<div id="editorB" class="ace_editor">function foo(items) {
+    					var x = "All this is syntax highlighted";
+    					return x;
+					}</div>
+				</td>
 			<td><pre id="result"></pre></td>
 		</tr>
 	</table>
@@ -122,111 +127,14 @@
 			}
 		}
 
-		
+		//SETUP ACE
+	    var editora = ace.edit("editorA");
+	    editora.setTheme("ace/theme/textmate");
+	    editora.getSession().setMode("ace/mode/java");
 
-		var w = 500,
-			h = 500;
-
-		var colorscale = d3.scale.category10();
-
-		//Legend titles
-		var LegendOptions = ['Smartphone','Tablet'];
-
-		//RADAR CHART
-		//Data
-		var data = [
-		  {source: {x: 0, y0: 0.0, y1: 0.4}, target: {x: 1, y0: 0.0, y1: 0.4}, group:  3},
-		  {source: {x: 1, y0: 0.0, y1: 0.3}, target: {x: 2, y0: 0.0, y1: 0.3}, group:  7},
-		  {source: {x: 2, y0: 0.0, y1: 0.1}, target: {x: 0, y0: 0.0, y1: 0.1}, group: 11}
-		];
-
-		var data2 = [
-		  {source: {x: 0, y0: 0.0, y1: 0.2}, target: {x: 1, y0: 0.0, y1: 0.2}, group:  3},
-		  {source: {x: 1, y0: 0.0, y1: 0.3}, target: {x: 2, y0: 0.0, y1: 0.3}, group:  7},
-		  {source: {x: 2, y0: 0.0, y1: 0.25}, target: {x: 0, y0: 0.0, y1: 0.25}, group: 11}
-		];
-
-		var data3 = [
-		  {source: {x: 0, y0: 0.0, y1: 0.4}, target: {x: 1, y0: 0.0, y1: 0.4}, group:  3},
-		  {source: {x: 1, y0: 0.0, y1: 0.3}, target: {x: 2, y0: 0.0, y1: 0.3}, group:  7},
-		  {source: {x: 2, y0: 0.0, y1: 0.01}, target: {x: 0, y0: 0.0, y1: 0.01}, group: 11}
-		];
-
-		var data4 = [
-		  {source: {x: 0, y0: 0.0, y1: 0.1}, target: {x: 1, y0: 0.0, y1: 0.1}, group:  3},
-		  {source: {x: 1, y0: 0.0, y1: 0.3}, target: {x: 2, y0: 0.0, y1: 0.3}, group:  7},
-		  {source: {x: 2, y0: 0.0, y1: 0.1}, target: {x: 0, y0: 0.0, y1: 0.1}, group: 11}
-		];
-		
-		var data5 = [
-		  {source: {x: 0, y0: 0.0, y1: 0.2}, target: {x: 1, y0: 0.0, y1: 0.2}, group:  3},
-		  {source: {x: 1, y0: 0.0, y1: 0.1}, target: {x: 2, y0: 0.0, y1: 0.1}, group:  7},
-		  {source: {x: 2, y0: 0.0, y1: 0.2}, target: {x: 0, y0: 0.0, y1: 0.2}, group: 11}
-		];
-		
-		var data6 = [
-		  {source: {x: 0, y0: 0.0, y1: 0.16}, target: {x: 1, y0: 0.0, y1: 0.16}, group:  3},
-		  {source: {x: 1, y0: 0.0, y1: 0.3}, target: {x: 2, y0: 0.0, y1: 0.3}, group:  7},
-		  {source: {x: 2, y0: 0.0, y1: 0.01}, target: {x: 0, y0: 0.0, y1: 0.01}, group: 11}
-		];
-				
-		var data7 = [
-		  {source: {x: 0, y0: 0.0, y1: 0.2}, target: {x: 1, y0: 0.0, y1: 0.2}, group:  3},
-		  {source: {x: 1, y0: 0.0, y1: 0.01}, target: {x: 2, y0: 0.0, y1: 0.01}, group:  7},
-		  {source: {x: 2, y0: 0.0, y1: 0.2}, target: {x: 0, y0: 0.0, y1: 0.2}, group: 11}
-		];
-		
-		var data8 = [
-		  {source: {x: 0, y0: 0.0, y1: 0.3}, target: {x: 1, y0: 0.0, y1: 0.3}, group:  3},
-		  {source: {x: 1, y0: 0.0, y1: 0.3}, target: {x: 2, y0: 0.0, y1: 0.3}, group:  7},
-		  {source: {x: 2, y0: 0.0, y1: 0.3}, target: {x: 0, y0: 0.0, y1: 0.3}, group: 11}
-		];
-		
-		var data9 = [
-		  {source: {x: 0, y0: 0.0, y1: 0.12}, target: {x: 1, y0: 0.0, y1: 0.12}, group:  3},
-		  {source: {x: 1, y0: 0.0, y1: 0.3}, target: {x: 2, y0: 0.0, y1: 0.3}, group:  7},
-		  {source: {x: 2, y0: 0.0, y1: 0.1}, target: {x: 0, y0: 0.0, y1: 0.1}, group: 11}
-		];
-
-
-		var myChart = pulsePlot().width(100).height(100);
-		
-		d3.select("#chart1")
-		      .datum(data)
-		      .call(myChart);
-
-		d3.select("#chart2")
-		      .datum(data2)
-		      .call(myChart);
-
-		d3.select("#chart3")
-		      .datum(data3)
-		      .call(myChart);
-
-		d3.select("#chart4")
-		      .datum(data4)
-		      .call(myChart);
-
-		d3.select("#chart5")
-		      .datum(data5)
-		      .call(myChart);
-
-		d3.select("#chart6")
-		      .datum(data6)
-		      .call(myChart);
-
-		d3.select("#chart7")
-		      .datum(data7)
-		      .call(myChart);
-
-		d3.select("#chart8")
-		      .datum(data8)
-		      .call(myChart);
-
-		d3.select("#chart9")
-		      .datum(data9)
-		      .call(myChart);
-
+	    var editorb = ace.edit("editorB");
+	    editorb.setTheme("ace/theme/textmate");
+	    editorb.getSession().setMode("ace/mode/java");
 
 	</script>
 

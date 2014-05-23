@@ -80,7 +80,7 @@
 				$('#'+selectionRow+" "+"#"+selectionStart).removeClass("firstSelection").addClass("midSelection");
 				selectionStart = prevTextChange;
 				$("#a").empty().text(allJSONData[selectionStart].currText);
-				changed();
+				// changed();
 				addRightClickHandler('#'+selectionRow+" "+"#"+prevTextChange);
 			}
 		}
@@ -93,7 +93,7 @@
 				$('#'+selectionRow+" "+"#"+selectionStart).removeClass("firstSelection midSelection");
 				selectionStart = nextTextChange;
 				$("#a").empty().text(allJSONData[selectionStart].currText);
-				changed();
+				// changed();
 				$.contextMenu('destroy','#'+selectionRow+" "+"#"+selectionStart);
 			}
 		}
@@ -105,7 +105,7 @@
 				$('#'+selectionRow+" "+"#"+selectionEnd).removeClass("lastSelection midSelection");
 				selectionEnd = prevTextChange;
 				$("#b").empty().text(allJSONData[selectionEnd].currText);
-				changed();
+				// changed();
 				$.contextMenu('destroy','#'+selectionRow+" "+"#"+selectionEnd);
 			}
 		}
@@ -116,7 +116,7 @@
 			$('#'+selectionRow+" "+"#"+selectionEnd).removeClass("lastSelection").addClass("midSelection");
 			selectionEnd = nextTextChange;
 			$("#b").empty().text(allJSONData[selectionEnd].currText);
-			changed();
+			// changed();
 			addRightClickHandler('#'+selectionRow+" "+"#"+nextTextChange);
 		}
 
@@ -227,9 +227,36 @@
 			}else{
 				$("#a").empty().text(JSON.stringify(allJSONData[Idx]));
 			}
-			changed();
+			//changed();
 		}
 
+	function prettyInit(){
+	//Handle Text Changes
+		var firstTextEvent;
+		for(var j = 0; j< allJSONData.length;j++){
+			// if(allJSONData[j])
+			//console.log(allJSONData[j]);
+			if(allJSONData[j].eventType == "textChange"){
+				firstTextEvent = j;
+				break;
+			}
+		}
+		console.log("j"+j)
+		var first = findFirstTextChange(firstTextEvent);
+		var last = findLastTextChange(firstTextEvent);
+		//createSelection(first,(''));
+		$("#a").empty().text(allJSONData[first].currText);
+		$("#b").empty().text(allJSONData[last].currText);
+			// if(allJSONData[Idx].eventType === "textChange"){
+			// 	var first = findFirstTextChange(Idx);
+			// 	var last = findLastTextChange(Idx);
+			// 	createSelection(first,last,element);
+			// 	$("#a").empty().text(allJSONData[first].currText);
+			// 	$("#b").empty().text(allJSONData[last].currText);
+			// }else{
+			// 	$("#a").empty().text(JSON.stringify(allJSONData[Idx]));
+			// }
+	}
 		
 
 		function addRightClickHandler(elem){
@@ -684,7 +711,16 @@
 
   function buildpulseChart(TDDPulse, metricFunction){
   	var metrics = mapPulseArrayToMetrics(TDDPulse, metricFunction);
-	var my_pulsePlot = pulsePlot().width(100).height(100).innerRadius(5).outerRadius(50);
+	var my_pulsePlot = pulsePlot().width(100).height(100).innerRadius(5).outerRadius(50).click(function(){
+		// console.log("CLICK");
+		$('.pulseChart').removeClass("clickedPulsePlot");
+		$("#"+this.parentElement.id).addClass("clickedPulsePlot");
+		selectPulseinCycles(this.parentElement.id);
+	});
+		//.hover(function(){
+	// 	$('.pulseChart').removeClass("hoveredPulsePlot");
+	// 	$("#"+this.parentElement.id).addClass("hoveredPulsePlot");
+	// });
 
   	TDDPulse.forEach(function(pulse, index){
   		$('#PulseArea').append("<div class='pulseChart' id='pulse" + index + "'></div>");
@@ -696,14 +732,26 @@
   	});
   }
 
+  function selectPulseinCycles(elem){
+  	$('#TDDCycles').children().removeClass("unselected");
+  	var currPulse = TDDPulse[Number(elem.substr(5))];
+  	
+  	$('#TDDCycles').children().slice(0,currPulse.red.CycleStart).addClass("unselected");
+  	if(currPulse.blue == null){
+  		$('#TDDCycles').children().slice((Number(currPulse.green.CycleEnd)+1),$('#TDDCycles').children().length).addClass("unselected");
+  	}else{
+  		$('#TDDCycles').children().slice((Number(currPulse.blue.CycleEnd)+1),$('#TDDCycles').children().length).addClass("unselected");
+  	}
+  }
+
   function createHiveData(red,green,blue){
-  	if(blue == 0){
+  	if(blue == 0 || isNaN(blue)){
   		blue = 0.001;
   	}
-  	if(red == 0){
+  	if(red == 0 || isNaN(red)){
   		red = 0.001;
   	}
-  	if(green == 0){
+  	if(green == 0 || isNaN(green)){
   		green = 0.001;
   	}
 
@@ -728,12 +776,25 @@
 			   		addColorandListeners();
 
 			   		TDDPulse = buildTDDPulse(TDDCycles);
-
+			   		groupCycles(TDDPulse);
 			   		buildpulseChart(TDDPulse, timestampMetric);
 			   	}
 			},
 		});
   	}
+
+  	function groupCycles(TDDPulse){
+  		TDDPulse.forEach(function(currPulse){
+			// console.log(currPulse);
+			$('#TDD'+currPulse.red.CycleStart).addClass("startTDDPulse");
+			if(currPulse.blue == null){
+				$('#TDD'+currPulse.green.CycleEnd).addClass("endTDDPulse");
+			}else{
+				$('#TDD'+currPulse.blue.CycleEnd).addClass("endTDDPulse");
+			}
+		});
+  	}
+
 
   	function shallowClone(obj){
   		return jQuery.extend({}, obj);
@@ -808,6 +869,8 @@
 		return TDDPulse;
 	}
 
+
+
 	function testBuildTDDPulse(){
 		var red1 = {CycleType : "red"};
 		var green1 = {CycleType : "green"};
@@ -851,14 +914,18 @@
   			$('#allEvents').append("<div class='rowContainer' id='"+key+"Row'><div class='spacer'><div class='rowLabel'>"+key+"</div></div><div class='fileRow' id='" + getSafePath(key) + "' ></div></div>");   
   		});
 
+  		//prettyInit();
   		$.each( allJSONData, function( key, val ) {
   			addEvent(val,key);
   		});
 
-  		//addListeners();
   		loadCyclesFromServer();
+
+
   	});
   });
+
+
 
 
   $(function() {
