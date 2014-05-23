@@ -637,6 +637,9 @@
   function computeSourceFileTextEventMap(cycle){
   	var fileMap = {};
 
+  	if(cycle == null || cycle == undefined)
+  		return fileMap;
+
   	var start = parseInt(cycle.CycleStart);
   	var end = parseInt(cycle.CycleEnd);
 
@@ -687,6 +690,10 @@
 
   //given a cycle, return how many words were changed in it
   function wordChangedMetric(cycle){
+
+  	if (cycle == null || cycle == undefined)
+  		return 0;
+
   	var fileMap = computeSourceFileTextEventMap(cycle);
 
   	if (Object.keys(fileMap) == 0) {return 0};
@@ -896,6 +903,8 @@
 
 			i += advancement;
 		}
+
+		if (currentState === greenState) {doGreenState({CycleType : "endCycle"})};
 
 		return TDDPulse;
 	}
