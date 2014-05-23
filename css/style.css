@@ -332,6 +332,16 @@ width:2px;
 	background-color: #4e7300;
 }
 
+.refactoringLaunch{
+	background-color: #385e86;
+}
+.refactoringEnd{
+	background-color: #385e86;
+}
+.testRun_Failure{
+	background-color: #af292e;
+}
+
 
 .firstSelection{
 	opacity: 0.8;
