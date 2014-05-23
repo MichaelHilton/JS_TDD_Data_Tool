@@ -777,8 +777,14 @@
   }
 
   function selectOnePulse(currPulse){
-  	  	$('#TDDCycles').children().removeClass("unselected");  	
+
+  	$('#TDDCycles').children().removeClass("unselected");  	
   	$('#TDDCycles').children().slice(0,currPulse.red.CycleStart).addClass("unselected");
+
+  	$("#bottomBar").scrollLeft($('#TDD'+currPulse.red.CycleStart).position().left).animate();
+  	console.log($('#TDD'+currPulse.red.CycleStart).position().left);
+
+  	//st.log($('#TDDCycles').children().slice(0,currPulse.red.CycleStart))
   	if(currPulse.blue == null){
   		$('#TDDCycles').children().slice((Number(currPulse.green.CycleEnd)+1),$('#TDDCycles').children().length).addClass("unselected");
   	}else{
@@ -820,6 +826,7 @@
 			   		TDDPulse = buildTDDPulse(TDDCycles);
 			   		groupCycles(TDDPulse);
 			   		buildpulseChart(TDDPulse, timestampMetric);
+			   		// buildpulseChart(TDDPulse, wordChangedMetric);
 			   	}
 			},
 		});
