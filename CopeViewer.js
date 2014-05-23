@@ -408,6 +408,24 @@
 		$(document).unbind('keydown');
 	}
 
+	function findCurrPulseLocFromCycle(currID){
+		var currPulse;
+		for(var i =0; i < TDDPulse.length; i++){
+			var currTDDPulse = TDDPulse[i];
+			if(currTDDPulse.red.id == currID){
+				return i;
+			}
+			if(currTDDPulse.green.id == currID){
+				return i;
+			}
+			if(currTDDPulse.blue != null){
+				if(currTDDPulse.blue.id == currID){
+				return i;
+				}
+			}
+		}
+	}
+
 	function selectCycleListener(element){
 		// console.log(element.data.currIdx);
 		var selectedCycleIndex = element.data.currIdx;
@@ -415,6 +433,12 @@
 		var start = TDDCycles[selectedCycleIndex].CycleStart;
 		var end = TDDCycles[selectedCycleIndex].CycleEnd;
 		removeAllSelection();
+
+        var currID = TDDCycles[selectedCycleIndex].id;
+		//findCurrPulseFromCycle(currID);
+
+		selectPulseinCycles("pulse"+findCurrPulseLocFromCycle(currID));
+
 		$('#TDD'+start).addClass("CycleStartSelection");
 		$('#TDD'+end).addClass("CycleEndSelection");
 		for (var i=Number(start)+1;i<=Number(end)-1;i++)
@@ -716,8 +740,7 @@
   	var metrics = mapPulseArrayToMetrics(TDDPulse, metricFunction);
 	var my_pulsePlot = pulsePlot().width(100).height(100).innerRadius(5).outerRadius(50).click(function(){
 		// console.log("CLICK");
-		$('.pulseChart').removeClass("clickedPulsePlot");
-		$("#"+this.parentElement.id).addClass("clickedPulsePlot");
+		
 		selectPulseinCycles(this.parentElement.id);
 	});
 		//.hover(function(){
@@ -736,9 +759,14 @@
   }
 
   function selectPulseinCycles(elem){
-  	$('#TDDCycles').children().removeClass("unselected");
+  	$('.pulseChart').removeClass("clickedPulsePlot");
+	$("#"+elem).addClass("clickedPulsePlot");
   	var currPulse = TDDPulse[Number(elem.substr(5))];
-  	
+  	selectOnePulse(currPulse);
+  }
+
+  function selectOnePulse(currPulse){
+  	  	$('#TDDCycles').children().removeClass("unselected");  	
   	$('#TDDCycles').children().slice(0,currPulse.red.CycleStart).addClass("unselected");
   	if(currPulse.blue == null){
   		$('#TDDCycles').children().slice((Number(currPulse.green.CycleEnd)+1),$('#TDDCycles').children().length).addClass("unselected");
