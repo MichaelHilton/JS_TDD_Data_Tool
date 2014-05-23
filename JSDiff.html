@@ -40,6 +40,7 @@
 
 	<table>
 		<tr>
+			<div id="eventDiv"><div id="eventACE" class="ace_editor"></div></div>
 			<td contenteditable="true" id="a">
 					<div id="editorA" class="ace_editor">function foo(items) {
     					var x = "All this is syntax highlighted";
@@ -146,6 +147,10 @@
 	    var editorb = ace.edit("editorB");
 	    editorb.setTheme("ace/theme/textmate");
 	    editorb.getSession().setMode("ace/mode/java");
+
+	    var JSONeditor = ace.edit("eventACE");
+	    editorb.setTheme("ace/theme/textmate");
+	    editorb.getSession().setMode("ace/mode/json");
 
 	</script>
 

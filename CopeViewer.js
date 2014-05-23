@@ -219,6 +219,7 @@
 		function eventClickHandler(Idx,element){
 			//Handle Text Changes
 			if(allJSONData[Idx].eventType === "textChange"){
+				$('#eventDiv').css('display','none');
 				var first = findFirstTextChange(Idx);
 				var last = findLastTextChange(Idx);
 				createSelection(first,last,element);
@@ -233,7 +234,9 @@
 			}else{
 			//	$("#a").empty().text(JSON.stringify(allJSONData[Idx]));
 			//TODO ADD ELEGENT EVENT HANDELING
-
+			//JSON.stringify(jsonDoc, null, '\t')
+			    $('#eventDiv').css('display','block');
+				JSONeditor.getSession().setValue(JSON.stringify(allJSONData[Idx], null, '\t'));
 			}
 			changed();
 		}

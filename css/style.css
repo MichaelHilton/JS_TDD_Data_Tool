@@ -281,6 +281,17 @@ width: 2px;
 .unselected{
 	opacity:.3;
 }
+
+
+#eventDiv{
+	position: absolute;
+width: 100%;
+height: 52%;
+display: none;
+z-index: 1000;
+background-color: #EEE;
+margin-top:30px;
+}
 /*#TDDCycles .placeHolder.REDCYCLE{
 	width:8px;
 }
