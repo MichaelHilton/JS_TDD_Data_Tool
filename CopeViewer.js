@@ -80,7 +80,7 @@
 				$('#'+selectionRow+" "+"#"+selectionStart).removeClass("firstSelection").addClass("midSelection");
 				selectionStart = prevTextChange;
 				$("#a").empty().text(allJSONData[selectionStart].currText);
-				// changed();
+				changed();
 				addRightClickHandler('#'+selectionRow+" "+"#"+prevTextChange);
 			}
 		}
@@ -93,7 +93,7 @@
 				$('#'+selectionRow+" "+"#"+selectionStart).removeClass("firstSelection midSelection");
 				selectionStart = nextTextChange;
 				$("#a").empty().text(allJSONData[selectionStart].currText);
-				// changed();
+				changed();
 				$.contextMenu('destroy','#'+selectionRow+" "+"#"+selectionStart);
 			}
 		}
@@ -105,7 +105,7 @@
 				$('#'+selectionRow+" "+"#"+selectionEnd).removeClass("lastSelection midSelection");
 				selectionEnd = prevTextChange;
 				$("#b").empty().text(allJSONData[selectionEnd].currText);
-				// changed();
+				changed();
 				$.contextMenu('destroy','#'+selectionRow+" "+"#"+selectionEnd);
 			}
 		}
@@ -116,7 +116,7 @@
 			$('#'+selectionRow+" "+"#"+selectionEnd).removeClass("lastSelection").addClass("midSelection");
 			selectionEnd = nextTextChange;
 			$("#b").empty().text(allJSONData[selectionEnd].currText);
-			// changed();
+			changed();
 			addRightClickHandler('#'+selectionRow+" "+"#"+nextTextChange);
 		}
 
@@ -222,12 +222,20 @@
 				var first = findFirstTextChange(Idx);
 				var last = findLastTextChange(Idx);
 				createSelection(first,last,element);
-				$("#a").empty().text(allJSONData[first].currText);
-				$("#b").empty().text(allJSONData[last].currText);
+				// $("#a").empty().text(allJSONData[first].currText);
+				// $("#b").empty().text(allJSONData[last].currText);
+				
+				//editor.getSession().setValue("new code here");
+				editora.getSession().setValue(allJSONData[first].currText);
+				editorb.getSession().setValue(allJSONData[last].currText);
+
+
 			}else{
-				$("#a").empty().text(JSON.stringify(allJSONData[Idx]));
+			//	$("#a").empty().text(JSON.stringify(allJSONData[Idx]));
+			//TODO ADD ELEGENT EVENT HANDELING
+
 			}
-			//changed();
+			changed();
 		}
 
 	function prettyInit(){
@@ -245,9 +253,11 @@
 		var first = findFirstTextChange(firstTextEvent);
 		var last = findLastTextChange(firstTextEvent);
 		//createSelection(first,(''));
-		$("#a").empty().text(allJSONData[first].currText);
-		$("#b").empty().text(allJSONData[last].currText);
-			// if(allJSONData[Idx].eventType === "textChange"){
+		editora.getSession().setValue(allJSONData[first].currText);
+		editorb.getSession().setValue(allJSONData[last].currText);
+		// $("#a").empty().text(allJSONData[first].currText);
+		// $("#b").empty().text(allJSONData[last].currText);
+		// 	// if(allJSONData[Idx].eventType === "textChange"){
 			// 	var first = findFirstTextChange(Idx);
 			// 	var last = findLastTextChange(Idx);
 			// 	createSelection(first,last,element);
