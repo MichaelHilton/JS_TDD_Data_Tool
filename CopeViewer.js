@@ -747,17 +747,14 @@
   	return metricArray;
   }
 
+
+
+
   function buildpulseChart(TDDPulse, metricFunction){
   	var metrics = mapPulseArrayToMetrics(TDDPulse, metricFunction);
 	var my_pulsePlot = pulsePlot().width(100).height(100).innerRadius(5).outerRadius(50).click(function(){
-		// console.log("CLICK");
-		
 		selectPulseinCycles(this.parentElement.id);
 	});
-		//.hover(function(){
-	// 	$('.pulseChart').removeClass("hoveredPulsePlot");
-	// 	$("#"+this.parentElement.id).addClass("hoveredPulsePlot");
-	// });
 
   	TDDPulse.forEach(function(pulse, index){
   		$('#PulseArea').append("<div class='pulseChart' id='pulse" + index + "'></div>");
@@ -767,6 +764,12 @@
 		      .call(my_pulsePlot);
 
   	});
+		$('#PulseArea').append("<div class='pulseChart' id='pulseAll'></div>");
+		var dataAll = createAggHiveData(metrics);
+  		d3.select("#pulseAll")
+		      .datum(dataAll)
+		      .call(my_pulsePlot);
+
   }
 
   function selectPulseinCycles(elem){
@@ -812,6 +815,34 @@
 		];
 		return data;
   }
+
+
+  function createAggHiveData(metrics){
+  	var data = [];
+  	for(var k = 0; k <metrics.length; k++){
+  		currMetric = metrics[k];
+  		var blue = currMetric.blue;
+  		var red = currMetric.red;
+  		var green = currMetric.green;
+  		if(blue == 0 || isNaN(blue)){
+  		blue = 0.001;
+  		}
+	  	if(red == 0 || isNaN(red)){
+	  		red = 0.001;
+	  	}
+	  	if(green == 0 || isNaN(green)){
+	  		green = 0.001;
+	  	}
+	  	data.push({source: {x: 0, y0: 0.0, y1: red}, target: {x: 1, y0: 0.0, y1: red}, group:  3});
+		data.push({source: {x: 1, y0: 0.0, y1: green}, target: {x: 2, y0: 0.0, y1: green}, group:  7});
+		data.push({source: {x: 2, y0: 0.0, y1: blue}, target: {x: 0, y0: 0.0, y1: blue}, group:  11});
+  	}
+
+		return data;
+  }
+
+
+
 
   function loadCyclesFromServer(){
 	  	$.ajax({

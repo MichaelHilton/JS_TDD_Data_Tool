@@ -12,6 +12,9 @@ var margin = {top: 20, right: 20, bottom: 30, left: 50},
 	  //draw the chart
 	  selection.each(function(data) {
 
+
+	  var opacity = 3/ data.length ;
+
 	  var angle = d3.scale.ordinal().domain(d3.range(4)).rangePoints([0, 2 * Math.PI]),
 	  radius = d3.scale.linear().range([innerRadius, outerRadius]),
 	  color = d3.scale.ordinal().range(["#af292e","#4e7300","#385e86"]);
@@ -43,7 +46,7 @@ var margin = {top: 20, right: 20, bottom: 30, left: 50},
 	    .endRadius(function(d) { return radius(d.y1); 
 	    }))
 	    .style("fill", function(d) { return color(d.group);
-	  });
+	  }).style("opacity",opacity);
 
 	g.selectAll(".axis")
 	    .data(d3.range(3))
