@@ -781,8 +781,8 @@
   	$('#TDDCycles').children().removeClass("unselected");  	
   	$('#TDDCycles').children().slice(0,currPulse.red.CycleStart).addClass("unselected");
 
-  	$("#bottomBar").scrollLeft($('#TDD'+currPulse.red.CycleStart).position().left).animate();
-  	console.log($('#TDD'+currPulse.red.CycleStart).position().left);
+  	$("#bottomBar").scrollLeft($("#bottomBar").scrollLeft() + $('#TDD'+currPulse.red.CycleStart).offset().left).animate();
+  	//console.log($('#TDD'+currPulse.red.CycleStart).offset().left);
 
   	//st.log($('#TDDCycles').children().slice(0,currPulse.red.CycleStart))
   	if(currPulse.blue == null){
