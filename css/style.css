@@ -9,13 +9,13 @@ html, body {
 	font-family: "Helvetica";
 }
 body {
-	padding-top: 1.8em;
+	/*padding-top: 1.8em;*/
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	box-sizing: border-box;
 }
 html, body, table, tbody, tr, td {
-	height: 93%
+	height: 80%
 }
 table {
 	table-layout: fixed;
@@ -45,6 +45,19 @@ ins {
 	color: #406619;
 	text-decoration: none;
 }
+
+    .ace_editor { 
+/*        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;*/
+        width:100%;
+        height:100%;
+        margin-top: -28px;
+    }
+
+
 
 #settings {
 	//position: absolute;
@@ -88,12 +101,76 @@ height: 40px;
 	}
 }
 
+#pulseCharts{
+	overflow-x: scroll;
+}
+
+.pulseChart{
+	width: 100px;
+	height: 100px;
+	float: left;
+	/*background: red;*/
+	border:1px #EEE;
+	opacity:.6;
+
+}
+
+.pulseChart.clickedPulsePlot{
+	background-color:#DDD;
+	border:1px #999;
+	border-radius:8px;
+	opacity:1;
+}
+
+
+
+.pulseChart.hoveredPulsePlot{
+	background-color:#FFF;
+/*	border:2px solid;*/
+	border-radius:8px;
+}
+
+#PulseArea{
+	width:100%;
+	height: 110px;
+	padding-top: 10px;
+}
+
+.startTDDPulse{
+	border-top-left-radius:6px;
+	border-bottom-left-radius:6px;
+}
+
+.endTDDPulse{
+	border-top-right-radius:6px;
+ 	border-bottom-right-radius:6px;
+}
+
+.arc {
+  fill-opacity: .2;
+}
+
+.axis .fill {
+  stroke: #aaa;
+  stroke-width: 8px;
+  stroke-linecap: square;
+}
+
+.axis .stroke {
+  stroke: #fff;
+  stroke-width: 12px;
+  stroke-linecap: square;
+}
+
 #bottomBar{
 	width:100%;
 	height:190px;
 	overflow-x: scroll;
 	
 }
+
+
+
 .eventDiv{
 	width:8px;
 	height:20px;
@@ -201,6 +278,20 @@ width: 2px;
 	border-bottom: 1px solid black;
 }
 
+.unselected{
+	opacity:.3;
+}
+
+
+#eventDiv{
+	position: absolute;
+width: 100%;
+height: 47%;
+display: none;
+z-index: 1000;
+background-color: #EEE;
+margin-top:30px;
+}
 /*#TDDCycles .placeHolder.REDCYCLE{
 	width:8px;
 }
@@ -239,6 +330,16 @@ width:2px;
 
 .testRun_OK{
 	background-color: #4e7300;
+}
+
+.refactoringLaunch{
+	background-color: #385e86;
+}
+.refactoringEnd{
+	background-color: #385e86;
+}
+.testRun_Failure{
+	background-color: #af292e;
 }
 
 
