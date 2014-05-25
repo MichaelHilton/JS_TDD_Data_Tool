@@ -1,6 +1,17 @@
 		var TDDCycles = [];
+		var TDDPulse = [];
 		var filename;
 		var fileNames = {};
+
+		function updateTDDCycleStart(index,cycleStart){
+ 			TDDCycles[index].CycleStart = cycleStart;
+ 			TDDCycles[index].id = cycleStart+""+TDDCycles[index].CycleEnd;
+		}
+
+		function updateTDDCycleEnd(index,cycleEnd){
+			TDDCycles[index].CycleEnd = cycleEnd;
+			TDDCycles[index].id = TDDCycles[index].CycleStart+""+cycleEnd;
+		}
 
 		function findFirstTextChange(Idx){
 			while(Idx > 0 && allJSONData[Idx].eventType === "textChange"){
@@ -111,7 +122,7 @@
 
 
 		function shiftCycleStartLeft(index){
-			console.log("ShiftCycleStartLeft");
+			// console.log("ShiftCycleStartLeft");
 			var currSpot = Number(TDDCycles[index].CycleStart);
 			var nextSpot = currSpot-1;
 			
@@ -138,12 +149,13 @@
 			$('#TDD'+nextSpot).addClass("CycleStartSelection "+ currCycleColor+ " "+ currCycleID);
 			$('#TDD'+nextSpot).bind("click",{currIdx:index},selectCycleListener);
 
-			TDDCycles[index].CycleStart = nextSpot;
+			// TDDCycles[index].CycleStart = nextSpot;
+			updateTDDCycleStart(index,nextSpot);
 			addCycleRightClickHandler("#TDD"+nextSpot);
 		}
 
 		function shiftCycleStartRight(index){
-			console.log("shiftCycleStartRight");
+			// console.log("shiftCycleStartRight");
 			var currSpot = Number(TDDCycles[index].CycleStart);
 			var nextSpot = currSpot+1;
 			if(nextSpot >= Number(TDDCycles[index].CycleEnd)){
@@ -152,12 +164,13 @@
 			$('#TDD'+currSpot).removeClass("CycleStartSelection "+" GREENCYCLE REDCYCLE BLUECYCLE "+ TDDCycles[index].id);
 			$('#TDD'+nextSpot).removeClass("CycleMidSelection").addClass("CycleStartSelection");
 			$('#TDD'+currSpot).unbind();
-			TDDCycles[index].CycleStart = nextSpot;
+			//TDDCycles[index].CycleStart = nextSpot;
+			updateTDDCycleStart(index,nextSpot);
 			$.contextMenu('destroy','#TDD'+currSpot);
 
 		}
 		function shiftCycleEndLeft(index){
-			console.log("shiftCycleEndLeft");
+			// console.log("shiftCycleEndLeft");
 			var currSpot = Number(TDDCycles[index].CycleEnd);
 			var nextSpot = currSpot-1;
 			if(nextSpot <= Number(TDDCycles[index].CycleStart)){
@@ -166,11 +179,12 @@
 			$('#TDD'+currSpot).removeClass("CycleEndSelection "+" GREENCYCLE REDCYCLE BLUECYCLE "+ TDDCycles[index].id);
 			$('#TDD'+nextSpot).removeClass("CycleMidSelection").addClass("CycleEndSelection");
 			$('#TDD'+currSpot).unbind();
-			TDDCycles[index].CycleEnd = nextSpot;
+			updateTDDCycleEnd(index,nextSpot);
+			// TDDCycles[index].CycleEnd = nextSpot;
 			$.contextMenu('destroy','#TDD'+currSpot);
 		}
 		function shiftCycleEndRight(index){
-			console.log("shiftCycleEndRight");
+			// console.log("shiftCycleEndRight");
 			var currSpot = Number(TDDCycles[index].CycleEnd);
 			var nextSpot = currSpot+1;
 			if(index<(TDDCycles.length-1)){
@@ -196,7 +210,8 @@
 			$('#TDD'+nextSpot).addClass("CycleEndSelection "+ currCycleColor+ " "+ currCycleID);
 			$('#TDD'+nextSpot).bind("click",{currIdx:index},selectCycleListener);
 
-			TDDCycles[index].CycleEnd = nextSpot;
+			updateTDDCycleEnd(index,nextSpot);
+			//TDDCycles[index].CycleEnd = nextSpot;
 			addCycleRightClickHandler("#TDD"+nextSpot);
 
 		}
@@ -204,17 +219,58 @@
 		function eventClickHandler(Idx,element){
 			//Handle Text Changes
 			if(allJSONData[Idx].eventType === "textChange"){
+				$('#eventDiv').css('display','none');
 				var first = findFirstTextChange(Idx);
 				var last = findLastTextChange(Idx);
 				createSelection(first,last,element);
-				$("#a").empty().text(allJSONData[first].currText);
-				$("#b").empty().text(allJSONData[last].currText);
+				// $("#a").empty().text(allJSONData[first].currText);
+				// $("#b").empty().text(allJSONData[last].currText);
+				
+				//editor.getSession().setValue("new code here");
+				editora.getSession().setValue(allJSONData[first].currText);
+				editorb.getSession().setValue(allJSONData[last].currText);
+
+
 			}else{
-				$("#a").empty().text(JSON.stringify(allJSONData[Idx]));
+				createSelection(Idx,Idx,element);
+			//	$("#a").empty().text(JSON.stringify(allJSONData[Idx]));
+			//TODO ADD ELEGENT EVENT HANDELING
+			//JSON.stringify(jsonDoc, null, '\t')
+			    $('#eventDiv').css('display','block');
+				JSONeditor.getSession().setValue(JSON.stringify(allJSONData[Idx], null, '\t'));
 			}
 			changed();
 		}
 
+	function prettyInit(){
+	//Handle Text Changes
+		var firstTextEvent;
+		for(var j = 0; j< allJSONData.length;j++){
+			// if(allJSONData[j])
+			//console.log(allJSONData[j]);
+			if(allJSONData[j].eventType == "textChange"){
+				firstTextEvent = j;
+				break;
+			}
+		}
+		console.log("j"+j)
+		var first = findFirstTextChange(firstTextEvent);
+		var last = findLastTextChange(firstTextEvent);
+		//createSelection(first,(''));
+		editora.getSession().setValue(allJSONData[first].currText);
+		editorb.getSession().setValue(allJSONData[last].currText);
+		// $("#a").empty().text(allJSONData[first].currText);
+		// $("#b").empty().text(allJSONData[last].currText);
+		// 	// if(allJSONData[Idx].eventType === "textChange"){
+			// 	var first = findFirstTextChange(Idx);
+			// 	var last = findLastTextChange(Idx);
+			// 	createSelection(first,last,element);
+			// 	$("#a").empty().text(allJSONData[first].currText);
+			// 	$("#b").empty().text(allJSONData[last].currText);
+			// }else{
+			// 	$("#a").empty().text(JSON.stringify(allJSONData[Idx]));
+			// }
+	}
 		
 
 		function addRightClickHandler(elem){
@@ -356,20 +412,37 @@
 		$(document).unbind('keydown');
 	}
 
-	function selectCycleListener(element){
-		console.log(element.data.currIdx);
-		//var selectedCycleIndex = element.data.currIdx;
-
-		var selectedCycleIndex;
-		for(var i = 0; i < TDDCycles.length;i++){
-			if(TDDCycles[i].id === element.data.currId){
-				selectedCycleIndex = i;
+	function findCurrPulseLocFromCycle(currID){
+		var currPulse;
+		for(var i =0; i < TDDPulse.length; i++){
+			var currTDDPulse = TDDPulse[i];
+			if(currTDDPulse.red.id == currID){
+				return i;
+			}
+			if(currTDDPulse.green.id == currID){
+				return i;
+			}
+			if(currTDDPulse.blue != null){
+				if(currTDDPulse.blue.id == currID){
+				return i;
+				}
 			}
 		}
+	}
+
+	function selectCycleListener(element){
+		// console.log(element.data.currIdx);
+		var selectedCycleIndex = element.data.currIdx;
 
 		var start = TDDCycles[selectedCycleIndex].CycleStart;
 		var end = TDDCycles[selectedCycleIndex].CycleEnd;
 		removeAllSelection();
+
+        var currID = TDDCycles[selectedCycleIndex].id;
+		//findCurrPulseFromCycle(currID);
+
+		selectPulseinCycles("pulse"+findCurrPulseLocFromCycle(currID));
+
 		$('#TDD'+start).addClass("CycleStartSelection");
 		$('#TDD'+end).addClass("CycleEndSelection");
 		for (var i=Number(start)+1;i<=Number(end)-1;i++)
@@ -560,6 +633,216 @@
   	return(fileNames);
   }
 
+  function stringEndsWith(str, suffix) {
+    return str.indexOf(suffix, str.length - suffix.length) !== -1;
+  }
+
+  //given a cycle, construct mappings like file -> [event, ...] for all files touched in the cycle
+  function computeSourceFileTextEventMap(cycle){
+  	var fileMap = {};
+
+  	if(cycle == null || cycle == undefined)
+  		return fileMap;
+
+  	var start = parseInt(cycle.CycleStart);
+  	var end = parseInt(cycle.CycleEnd);
+
+  	var sourceTextEvents = allJSONData.slice(start, end + 1).filter(function(anEvent){
+  		if (anEvent.eventType != "textChange") 
+  			return false;
+
+  		if(!stringEndsWith(anEvent.entityAddress, ".java"))
+  			return false;
+  		 
+  		return true;
+  	});
+
+  	sourceTextEvents.forEach(function(anEvent){
+  		var file = anEvent.entityAddress;
+
+  		if (!(file in fileMap)) {
+  			fileMap[file] = [];
+  		}
+
+  		fileMap[file].push(anEvent);
+  	});
+
+  	return fileMap;
+  }
+
+  function splitInWords(value) {
+    return value.split(/(\s+|\b)/g).filter(function(s){ return s.trim() != "" });
+  };
+
+  //how many words does firstString differ from secondString
+  function getWordDiffSize(firstString, secondString){
+  	var diff = JsDiff.diffWords(firstString, secondString);
+
+  	var diffStrings = diff.filter(function(aDiff){
+  		return (aDiff.added != undefined) || (aDiff.removed != undefined);
+  	})
+  	.map(function(aDiff){return aDiff.value});
+
+  	var wordCount = 0;
+
+  	for (i in diffStrings){
+  		wordCount += splitInWords(diffStrings[i]).length;
+  	}
+
+  	return wordCount;
+  }
+
+  //given a cycle, return how many words were changed in it
+  function wordChangedMetric(cycle){
+
+  	if (cycle == null || cycle == undefined)
+  		return 0;
+
+  	var fileMap = computeSourceFileTextEventMap(cycle);
+
+  	if (Object.keys(fileMap) == 0) {return 0};
+
+  	var fileWordsChanged = Object.keys(fileMap).map(function(file){
+  		var firstTextEvent = fileMap[file][0];
+  		var lastTextEvent = fileMap[file][fileMap[file].length - 1];
+
+  		return getWordDiffSize(firstTextEvent.currText, lastTextEvent.currText);
+  	});
+
+  	return fileWordsChanged.reduce(function(a, b){a + b});
+  }
+
+  //given a cycle, return how long it took
+  function timestampMetric(cycle){
+  	if (cycle == null) {return 0};
+
+  	var startingEvent = allJSONData[cycle.CycleStart];
+  	var endingEvent = allJSONData[cycle.CycleEnd];
+
+  	return Math.abs(endingEvent.timestamp - startingEvent.timestamp);
+  }
+
+  //map an array of pulses to an array of pulse metrics
+  function mapPulseArrayToMetrics(TDDPulse, metricFunction){
+  	var metricArray = [];
+
+  	var maxRed = Number.MIN_VALUE;
+  	var maxGreen = Number.MIN_VALUE;
+  	var maxBlue = Number.MIN_VALUE;
+
+	TDDPulse.forEach(function(pulse){
+		if (metricFunction(pulse.red) > maxRed) {maxRed = metricFunction(pulse.red)};
+		if (metricFunction(pulse.green) > maxGreen) {maxGreen = metricFunction(pulse.green)};
+		if (metricFunction(pulse.blue) > maxBlue) {maxBlue = metricFunction(pulse.blue)};
+	});  	
+
+  	TDDPulse.forEach(function(pulse){
+  		var redMetric = metricFunction(pulse.red) / maxRed;
+  		var greenMetric = metricFunction(pulse.green) / maxGreen;
+  		var blueMetric = metricFunction(pulse.blue) / maxBlue;
+
+  		metricArray.push({red : redMetric, green : greenMetric, blue : blueMetric});
+  	});
+
+  	return metricArray;
+  }
+
+
+
+
+  function buildpulseChart(TDDPulse, metricFunction){
+  	var metrics = mapPulseArrayToMetrics(TDDPulse, metricFunction);
+	var my_pulsePlot = pulsePlot().width(100).height(100).innerRadius(5).outerRadius(50).click(function(){
+		selectPulseinCycles(this.parentElement.id);
+	});
+
+  	TDDPulse.forEach(function(pulse, index){
+  		$('#PulseArea').append("<div class='pulseChart' id='pulse" + index + "'></div>");
+		var data = createHiveData(metrics[index].red,metrics[index].green,metrics[index].blue);
+  		d3.select("#pulse" + index + "")
+		      .datum(data)
+		      .call(my_pulsePlot);
+
+  	});
+		$('#PulseArea').append("<div class='pulseChart' id='pulseAll'></div>");
+		var dataAll = createAggHiveData(metrics);
+  		d3.select("#pulseAll")
+		      .datum(dataAll)
+		      .call(my_pulsePlot);
+
+  }
+
+  function selectPulseinCycles(elem){
+  	$('.pulseChart').removeClass("clickedPulsePlot");
+	$("#"+elem).addClass("clickedPulsePlot");
+  	var currPulse = TDDPulse[Number(elem.substr(5))];
+  	selectOnePulse(currPulse);
+  }
+
+  function selectOnePulse(currPulse){
+
+  	$('#TDDCycles').children().removeClass("unselected");  	
+  	$('#TDDCycles').children().slice(0,currPulse.red.CycleStart).addClass("unselected");
+
+  	//$("#bottomBar").scrollLeft($("#bottomBar").scrollLeft() + $('#TDD'+currPulse.red.CycleStart).offset().left).animate();
+  	$("#bottomBar").animate({scrollLeft: $("#bottomBar").scrollLeft() + $('#TDD'+currPulse.red.CycleStart).offset().left}, 800);
+
+  	//console.log($('#TDD'+currPulse.red.CycleStart).offset().left);
+
+  	//st.log($('#TDDCycles').children().slice(0,currPulse.red.CycleStart))
+  	if(currPulse.blue == null){
+  		$('#TDDCycles').children().slice((Number(currPulse.green.CycleEnd)+1),$('#TDDCycles').children().length).addClass("unselected");
+  	}else{
+  		$('#TDDCycles').children().slice((Number(currPulse.blue.CycleEnd)+1),$('#TDDCycles').children().length).addClass("unselected");
+  	}
+  }
+
+  function createHiveData(red,green,blue){
+  	if(blue == 0 || isNaN(blue)){
+  		blue = 0.001;
+  	}
+  	if(red == 0 || isNaN(red)){
+  		red = 0.001;
+  	}
+  	if(green == 0 || isNaN(green)){
+  		green = 0.001;
+  	}
+
+  	var data = [
+		  {source: {x: 0, y0: 0.0, y1: red}, target: {x: 1, y0: 0.0, y1: red}, group:  3},
+		  {source: {x: 1, y0: 0.0, y1: green}, target: {x: 2, y0: 0.0, y1: green}, group:  7},
+		  {source: {x: 2, y0: 0.0, y1: blue}, target: {x: 0, y0: 0.0, y1: blue}, group: 11}
+		];
+		return data;
+  }
+
+
+  function createAggHiveData(metrics){
+  	var data = [];
+  	for(var k = 0; k <metrics.length; k++){
+  		currMetric = metrics[k];
+  		var blue = currMetric.blue;
+  		var red = currMetric.red;
+  		var green = currMetric.green;
+  		if(blue == 0 || isNaN(blue)){
+  		blue = 0.001;
+  		}
+	  	if(red == 0 || isNaN(red)){
+	  		red = 0.001;
+	  	}
+	  	if(green == 0 || isNaN(green)){
+	  		green = 0.001;
+	  	}
+	  	data.push({source: {x: 0, y0: 0.0, y1: red}, target: {x: 1, y0: 0.0, y1: red}, group:  3});
+		data.push({source: {x: 1, y0: 0.0, y1: green}, target: {x: 2, y0: 0.0, y1: green}, group:  7});
+		data.push({source: {x: 2, y0: 0.0, y1: blue}, target: {x: 0, y0: 0.0, y1: blue}, group:  11});
+  	}
+
+		return data;
+  }
+
+
+
 
   function loadCyclesFromServer(){
 	  	$.ajax({
@@ -567,15 +850,141 @@
 	  		dataType: 'json',
 	  		success: function( data ) {
 	  			if(data === null){
-	  				console.log("No TDD Cycles saved");
+	  				//console.log("No TDD Cycles saved");
 	  			}else{
 			  		TDDCycles = data;
-			 	  	console.log(TDDCycles);
+			 	  	//console.log(TDDCycles);
 			   		addColorandListeners();
+
+			   		TDDPulse = buildTDDPulse(TDDCycles);
+			   		groupCycles(TDDPulse);
+			   		buildpulseChart(TDDPulse, timestampMetric);
+			   		// buildpulseChart(TDDPulse, wordChangedMetric);
 			   	}
 			},
 		});
   	}
+
+  	function groupCycles(TDDPulse){
+  		TDDPulse.forEach(function(currPulse){
+			// console.log(currPulse);
+			$('#TDD'+currPulse.red.CycleStart).addClass("startTDDPulse");
+			if(currPulse.blue == null){
+				$('#TDD'+currPulse.green.CycleEnd).addClass("endTDDPulse");
+			}else{
+				$('#TDD'+currPulse.blue.CycleEnd).addClass("endTDDPulse");
+			}
+		});
+  	}
+
+
+  	function shallowClone(obj){
+  		return jQuery.extend({}, obj);
+  	}
+
+	function buildTDDPulse(cycles){
+		var TDDPulse = [];
+
+		var initState = "init";
+		var redState = "red";
+		var greenState = "green";
+		var currentState = initState;
+
+		var emptyPulsePrototype = {"red" : null, "green" : null, "blue" : null};
+		var currentPulse = shallowClone(emptyPulsePrototype);
+
+		function doInitState(cycle){
+			if (cycle.CycleType === "red"){
+				currentState = redState;
+				currentPulse.red = cycle;
+			};
+			
+			return 1;
+		}
+
+		function doRedState(cycle){
+			if (cycle.CycleType === "green") {
+				currentState = greenState;
+				currentPulse.green = cycle;
+			}else{
+				currentState = initState;
+			};
+
+			return 1;
+		}
+
+		function doGreenState(cycle){
+			var advancement;
+
+			if (cycle.CycleType === "blue") {
+				currentPulse.blue = cycle;
+				advancement = 1;
+			} else{
+				advancement = 0;
+			}
+
+			currentState = initState;
+
+			TDDPulse.push(currentPulse);
+			currentPulse = shallowClone(emptyPulsePrototype);
+
+			return advancement;
+		}
+
+		var i = 0;
+		while(i < cycles.length){
+			var currentCycle = cycles[i];
+			var advancement = 1;
+
+			if (currentState === initState)
+				advancement = doInitState(currentCycle);
+
+			else if (currentState === redState)
+				advancement = doRedState(currentCycle);
+
+			else if (currentState === greenState)
+				advancement = doGreenState(currentCycle);
+
+			i += advancement;
+		}
+
+		if (currentState === greenState) {doGreenState({CycleType : "endCycle"})};
+
+		return TDDPulse;
+	}
+
+
+
+	function testBuildTDDPulse(){
+		var red1 = {CycleType : "red"};
+		var green1 = {CycleType : "green"};
+		var blue1 = {CycleType : "blue"};
+
+		var red2 = {CycleType : "red"};
+		var green2 = {CycleType : "green"};
+
+		var red3 = {CycleType : "red"};
+		var green3 = {CycleType : "green"};
+		var blue3 = {CycleType : "blue"};
+
+
+		var cycles = [{CycleType : "blue"}, 
+						red1, 
+						green1, 
+						blue1, 
+						{CycleType : "red"}, 
+						{CycleType : "red"}, 
+						red2, 
+						green2, 
+						red3, 
+						green3, 
+						blue3
+					];
+
+		var expected = [{"red" : red1, "green" : green1, "blue" : blue1}, {"red" : red2, "green" : green2, "blue" : null}, {"red" : red3, "green" : green3, "blue" : blue3}];
+
+		console.debug(buildTDDPulse(cycles));
+	}
 
  //Read in data of all changes
   $(document).ready(function(){
@@ -589,13 +998,18 @@
   			$('#allEvents').append("<div class='rowContainer' id='"+key+"Row'><div class='spacer'><div class='rowLabel'>"+key+"</div></div><div class='fileRow' id='" + getSafePath(key) + "' ></div></div>");   
   		});
 
+  		//prettyInit();
   		$.each( allJSONData, function( key, val ) {
   			addEvent(val,key);
   		});
-  		//addListeners();
+
   		loadCyclesFromServer();
+
+
   	});
   });
+
+
 
 
   $(function() {
