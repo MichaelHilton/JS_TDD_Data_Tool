@@ -14,7 +14,8 @@
 		}
 
 		function findFirstTextChange(Idx){
-			while(Idx > 0 && allJSONData[Idx].eventType === "textChange"){
+			var currEntityAddress = allJSONData[Idx].entityAddress;
+			while(Idx > 0 && allJSONData[Idx].eventType === "textChange" && currEntityAddress === allJSONData[Idx].entityAddress){
 				 Idx--;
 			}
 			return Idx+1;
@@ -66,7 +67,8 @@
 		}
 
 		function findLastTextChange(Idx){
-			while(Idx < allJSONData.length && allJSONData[Idx].eventType === "textChange"){
+			var currEntityAddress = allJSONData[Idx].entityAddress;
+			while(Idx < allJSONData.length && allJSONData[Idx].eventType === "textChange" && currEntityAddress === allJSONData[Idx].entityAddress){
 				 Idx++;
 			}
 			return Idx-1;
