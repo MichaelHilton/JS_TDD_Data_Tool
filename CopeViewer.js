@@ -778,7 +778,8 @@
   	$('.pulseChart').removeClass("clickedPulsePlot");
 	$("#"+elem).addClass("clickedPulsePlot");
   	var currPulse = TDDPulse[Number(elem.substr(5))];
-  	selectOnePulse(currPulse);
+//Disable Bi-Lateral Selection till markup is done.
+//  	selectOnePulse(currPulse);
   }
 
   function selectOnePulse(currPulse){
