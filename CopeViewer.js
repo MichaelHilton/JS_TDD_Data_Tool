@@ -991,6 +991,13 @@
 
  //Read in data of all changes
   $(document).ready(function(){
+
+  	//THIS WILL HELP SERVE FRESH PAGES ONLY
+	$.ajaxSetup ({
+	    // Disable caching of AJAX responses
+	    cache: false
+	});
+
   	filename = window.location.href.split("?")[1].split("=")[1];
   	$.getJSON("uploads/"+filename, function( data ) {
   		allJSONData = data;
