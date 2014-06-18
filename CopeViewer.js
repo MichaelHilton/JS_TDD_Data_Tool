@@ -3,14 +3,28 @@
 		var filename;
 		var fileNames = {};
 
-		function updateTDDCycleStart(index,cycleStart){
+		function updateTDDCycleStart(index,prevStart,cycleStart){
+			var oldId = TDDCycles[index].id;
+			var start = TDDCycles[index].CycleStart; 
  			TDDCycles[index].CycleStart = cycleStart;
  			TDDCycles[index].id = cycleStart+""+TDDCycles[index].CycleEnd;
+ 			for (var i=Number(prevStart);i<=Number(TDDCycles[index].CycleEnd);i++)
+					{
+						$('#TDD'+i).removeClass(oldId);
+						$('#TDD'+i).addClass(TDDCycles[index].id);
+					}
 		}
 
-		function updateTDDCycleEnd(index,cycleEnd){
+		function updateTDDCycleEnd(index,cycleEnd,prevEnd){
+			var oldId = TDDCycles[index].id;
+			var end = TDDCycles[index].CycleEnd; 
 			TDDCycles[index].CycleEnd = cycleEnd;
 			TDDCycles[index].id = TDDCycles[index].CycleStart+""+cycleEnd;
+			for (var i=Number(TDDCycles[index].CycleStart);i<=Number(prevEnd);i++)
+					{
+						$('#TDD'+i).removeClass(oldId);
+						$('#TDD'+i).addClass(TDDCycles[index].id);
+					}
 		}
 
 		function findFirstTextChange(Idx){
@@ -135,7 +149,7 @@
 			}
 
 			var currCycleType = TDDCycles[index].CycleType;
-			var currCycleID = TDDCycles[index].id;
+			//var currCycleID = TDDCycles[index].id;
 
 			$('#TDD'+currSpot).removeClass("CycleStartSelection").addClass("CycleMidSelection");
 
@@ -148,11 +162,14 @@
 				currCycleColor = "BLUECYCLE";
 			}
 
-			$('#TDD'+nextSpot).addClass("CycleStartSelection "+ currCycleColor+ " "+ currCycleID);
-			$('#TDD'+nextSpot).bind("click",{currIdx:index},selectCycleListener);
 
 			// TDDCycles[index].CycleStart = nextSpot;
-			updateTDDCycleStart(index,nextSpot);
+			updateTDDCycleStart(index,currSpot,nextSpot);
+
+			$('#TDD'+nextSpot).addClass("CycleStartSelection "+ currCycleColor+ " "+ TDDCycles[index].id);
+			$('#TDD'+nextSpot).bind("click",{currIdx:index},selectCycleListener);
+
+
 			addCycleRightClickHandler("#TDD"+nextSpot);
 		}
 
@@ -167,7 +184,7 @@
 			$('#TDD'+nextSpot).removeClass("CycleMidSelection").addClass("CycleStartSelection");
 			$('#TDD'+currSpot).unbind();
 			//TDDCycles[index].CycleStart = nextSpot;
-			updateTDDCycleStart(index,nextSpot);
+			updateTDDCycleStart(index,currSpot,nextSpot);
 			$.contextMenu('destroy','#TDD'+currSpot);
 
 		}
@@ -181,7 +198,7 @@
 			$('#TDD'+currSpot).removeClass("CycleEndSelection "+" GREENCYCLE REDCYCLE BLUECYCLE "+ TDDCycles[index].id);
 			$('#TDD'+nextSpot).removeClass("CycleMidSelection").addClass("CycleEndSelection");
 			$('#TDD'+currSpot).unbind();
-			updateTDDCycleEnd(index,nextSpot);
+			updateTDDCycleEnd(index,nextSpot,currSpot);
 			// TDDCycles[index].CycleEnd = nextSpot;
 			$.contextMenu('destroy','#TDD'+currSpot);
 		}
@@ -209,12 +226,15 @@
 				currCycleColor = "BLUECYCLE";
 			}
 
-			$('#TDD'+nextSpot).addClass("CycleEndSelection "+ currCycleColor+ " "+ currCycleID);
-			$('#TDD'+nextSpot).bind("click",{currIdx:index},selectCycleListener);
+			
 
-			updateTDDCycleEnd(index,nextSpot);
+			updateTDDCycleEnd(index,nextSpot,currSpot);
 			//TDDCycles[index].CycleEnd = nextSpot;
 			addCycleRightClickHandler("#TDD"+nextSpot);
+
+			$('#TDD'+nextSpot).addClass("CycleEndSelection "+ currCycleColor+ " "+ TDDCycles[index].id);
+			$('#TDD'+nextSpot).bind("click",{currIdx:index},selectCycleListener);
+
 
 		}
 
@@ -551,6 +571,7 @@
 		    		$('#TDD'+i).removeClass("REDCYCLE");
 		    		$('#TDD'+i).removeClass("BLUECYCLE");
 		    		$('#TDD'+i).removeClass("GREENCYCLE");
+		    		$('#TDD'+i).removeClass(entry.id);
 					$.contextMenu('destroy' ,'#TDD'+i);
 				}
 			}else{	
