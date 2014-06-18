@@ -1005,7 +1005,8 @@
   		var fileNames = findAllFiles(allJSONData);
   		// console.log(fileNames);
   		$.each(fileNames, function( key, val ) {
-  			$('#allEvents').append("<div class='rowContainer' id='"+key+"Row'><div class='spacer'><div class='rowLabel'>"+key+"</div></div><div class='fileRow' id='" + getSafePath(key) + "' ></div></div>");   
+  			$('#allEvents').append("<div class='rowContainer' id='"+key+"Row'><div class='spacer'><div class='rowLabel'>"+key+"</div></div><div class='fileRow' id='" + getSafePath(key) + "' ></div></div>");
+  			$('#bottomBar').height(Number($('#allEvents').height())+30);   
   		});
 
   		//prettyInit();
